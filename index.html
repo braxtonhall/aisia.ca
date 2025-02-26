@@ -9,6 +9,10 @@
 				position: relative;
 				width: fit-content;
 
+				@media (orientation: portrait) {
+					border-radius: 12px;
+				}
+
 				& > * {
 					filter: blur(0.04rem) brightness(1.1);
 				}
@@ -75,6 +79,7 @@
 			}
 
 			.smpte {
+				position: absolute;
 				display: flex;
 				flex-direction: column;
 
@@ -105,6 +110,9 @@
 
 			#panel:has(#comment-toggle:checked) ~ #comments {
 				height: 400px !important;
+				@media (orientation: portrait) {
+					height: 800px !important;
+				}
 			}
 
 			#comments {
@@ -114,6 +122,10 @@
 				height: 0;
 				overflow: hidden;
 				width: 192px;
+				@media (orientation: portrait) {
+					width: 384px;
+					border-radius: 12px;
+				}
 			}
 
 			.clickable {
@@ -125,14 +137,17 @@
 			}
 
 			.mute-label {
-				position: absolute;
 				margin: 13px;
+				position: absolute;
 				color: #25c320;
 				top: 0;
 				left: 0;
 				font-weight: 900;
 				font-family: monospace;
 				display: none;
+				@media (orientation: portrait) {
+					margin: 26px;
+				}
 			}
 
 			body {
@@ -141,6 +156,18 @@
 				color: indigo;
 				height: 100vh;
 				width: 100vw;
+				@media (orientation: portrait) {
+					font-size: 32px;
+				}
+			}
+
+			.crt-sized {
+				width: 192px;
+				height: 144px;
+				@media (orientation: portrait) {
+					width: 384px;
+					height: 288px;
+				}
 			}
 		</style>
 	</head>
@@ -148,10 +175,7 @@
 		<main style="flex-direction: column">
 			<h1 style="font-weight: lighter; margin-bottom: 0.1em">aisia.ca</h1>
 			<div class="crt">
-				<div
-					style="width: 192px; height: 144px; position: absolute"
-					class="smpte"
-				>
+				<div class="smpte crt-sized">
 					<div class="smpte-top">
 						<div style="background-color: #c0c0c0"></div>
 						<div style="background-color: #c3c31f"></div>
@@ -185,12 +209,11 @@
 				</div>
 				<video
 					id="player"
+					class="crt-sized"
 					src="22-10-30_144.mp4"
 					autoplay
 					muted
 					loop
-					width="192"
-					height="144"
 					style="object-fit: fill"
 					data-muted="true"
 				></video>
