@@ -199,31 +199,123 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-				display: none;
+				visibility: hidden;
 			}
 
 			main:has(#instagram-link:hover) #instagram-preview {
-				display: unset;
+				visibility: visible;
 			}
 			main:has(#letterboxd-link:hover) #letterboxd-preview {
-				display: unset;
+				visibility: visible;
 			}
 
-            @keyframes static {
-                100% {
-					background-position: 50% 0, 60% 50%
+			@keyframes in-wipe {
+				0% {
+					height: 0;
 				}
-            }
+				80% {
+					height: 70%;
+					top: 100%;
+				}
+			}
 
-			.static {
+			@keyframes out-wipe {
+				0% {
+					height: 70%;
+					top: 100%;
+				}
+				80% {
+					height: 0;
+				}
+			}
+
+			@keyframes in-channel {
+				0% {
+					opacity: 1;
+				}
+				90% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+
+			@keyframes out-channel {
+				0% {
+					opacity: 1;
+				}
+				90% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+
+			@keyframes hide-channel-on-load {
+				0% {
+					opacity: 0;
+				}
+				99% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+
+			#static-container-container {
+				animation: hide-channel-on-load 81ms linear 0s 1;
+				opacity: 1;
+			}
+
+			#static-container {
+				visibility: visible;
+				animation: in-channel 80ms linear 0s 1;
+				opacity: 0;
+				.black {
+					animation: out-wipe 80ms linear 0s 1;
+				}
+			}
+
+			.black {
+				position: absolute;
+				top: 0;
+				left: 0;
+				height: 0;
+			}
+
+			main:has(.previewable-link:hover) #static-container {
+				animation: out-channel 128ms linear 0s 1;
+				.black {
+					animation: in-wipe 128ms linear 0s 1;
+				}
+			}
+
+			@keyframes static {
+				100% {
+					background-position:
+						50% 0,
+						60% 50%;
+				}
+			}
+
+			#static {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
 				filter: blur(0.04rem) brightness(1.4);
-                background:
-                        repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%) 50% 0/2500px 2500px,
-                        repeating-conic-gradient(#000 0 0.0001%,#fff 0 0.0002%) 60% 60%/2500px 2500px;
-                background-blend-mode: difference;
-                animation: static .2s infinite steps(60) alternate;
-            }
-
+				background:
+					repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%)
+						50% 0/2500px 2500px,
+					repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60%
+						60%/2500px 2500px;
+				background-blend-mode: difference;
+				animation: static 0.2s infinite steps(60) alternate;
+			}
 		</style>
 	</head>
 	<body class="centered-elements" id="root">
@@ -293,6 +385,15 @@
 					alt="letterboxd preview"
 					class="crt-sized preview"
 				/>
+				<div id="static-container-container" class="crt-sized preview">
+					<div id="static-container">
+						<div id="static"></div>
+						<div
+							class="black"
+							style="width: 100%; background-color: black"
+						></div>
+					</div>
+				</div>
 				<p class="mute-label">MUTE</p>
 			</div>
 
@@ -300,12 +401,14 @@
 			<div id="panel" style="margin-bottom: 0.5em">
 				<a
 					id="instagram-link"
+					class="previewable-link"
 					href="https://www.instagram.com/__craftwerk/"
 					rel="external"
 					>🧶</a
 				>
 				<a
 					id="letterboxd-link"
+					class="previewable-link"
 					href="https://letterboxd.com/aisiaw/"
 					rel="external"
 					>🎥</a
@@ -333,13 +436,6 @@
 			>
 			</iframe>
 			<!-- TODO add a bob's club link -->
-			<!-- TODO https://www.youtube.com/watch?v=JVBgTbzhSrk -->
-			<!-- TODO can i make a crt channel change effect? https://stackoverflow.com/questions/3331353/transitions-on-the-css-display-property -->
-			<!-- TODO https://www.reddit.com/r/web_design/comments/2t44kw/crt_screen_effect_with_css/ -->
-
-			<div class="crt">
-				<div class="crt-sized static"></div>
-			</div>
 
 			<script>
 				const colours = [
@@ -354,6 +450,7 @@
 				];
 
 				const videos = [""];
+				// TODO on metadataloaded, play the channel change animation
 
 				const player = document.getElementById("player");
 				const video = videos[Math.floor(Math.random() * videos.length)];
