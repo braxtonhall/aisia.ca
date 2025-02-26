@@ -1,0 +1,148 @@
+<html lang="en">
+<meta charset="UTF-8">
+<head>
+	<title>aisia dot ca</title>
+	<style>
+		.crt {
+			border-radius: 6px;
+			overflow: hidden;
+			position: relative;
+			width: fit-content;
+
+			& > * {
+                filter: blur(0.04rem) brightness(1.1);
+			}
+		}
+
+		.crt:before,
+		.crt:after {
+			display: block;
+			pointer-events: none;
+			content: "";
+			position: absolute;
+		}
+
+		.crt:before {
+			width: 100%;
+			height: 2px;
+			z-index: 2147483649;
+            background: linear-gradient(
+                    to bottom,
+                    transparent 25%,
+                    rgba(0, 0, 0, 0.5) 50%,
+                    transparent 75%
+            );
+			opacity: 0.75;
+			animation: unique-scanline 6s linear infinite;
+		}
+
+		.crt:after {
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 2147483648;
+			background: linear-gradient(
+					to bottom,
+					transparent 10%,
+					rgba(0, 0, 0, 0.5) 50%,
+					transparent 90%
+			);
+			background-size: 100% 4px;
+			animation: scanlines 1s steps(60) infinite;
+		}
+
+		@keyframes unique-scanline {
+			0% {
+				transform: translate3d(0, 200000%, 0);
+			}
+		}
+
+		@keyframes scanlines {
+			0% {
+				background-position: 0 50%;
+			}
+		}
+
+        .centered-elements {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a[rel~="external"]:after {
+            content:"\2197";
+        }
+
+		.smpte {
+			display: flex;
+			flex-direction: column;
+			& > * {
+                display: flex;
+			}
+		}
+
+		.smpte-top {
+            flex: 96;
+			& > * {
+				flex: 1;
+			}
+		}
+
+		.smpte-mid {
+            flex: 11;
+            & > * {
+                flex: 1;
+            }
+		}
+
+		.smpte-bot {
+            flex: 37;
+		}
+	</style>
+
+</head>
+<body class="centered-elements" style="background-color: lavender; color: indigo">
+<main style="flex-direction: column">
+	<h1 style="font-weight: lighter; margin-bottom: 0.1em;">aisia.ca</h1>
+	<div class="crt">
+		<div style="width: 192px; height: 144px; position: absolute;" class="smpte">
+			<div class="smpte-top">
+				<div style="background-color: #c0c0c0;"></div>
+				<div style="background-color: #c3c31f;"></div>
+				<div style="background-color: #25c3c3;"></div>
+				<div style="background-color: #25c320;"></div>
+				<div style="background-color: #c31ac3;"></div>
+				<div style="background-color: #c31a15;"></div>
+				<div style="background-color: #0c0cc3;"></div>
+			</div>
+			<div class="smpte-mid">
+				<div style="background-color: #0c0cc3;"></div>
+				<div style="background-color: #1e1e1e;"></div>
+				<div style="background-color: #c31ac3;"></div>
+				<div style="background-color: #1e1e1e;"></div>
+				<div style="background-color: #25c3c3;"></div>
+				<div style="background-color: #1e1e1e;"></div>
+				<div style="background-color: #c3c3c3;"></div>
+			</div>
+			<div class="smpte-bot">
+				<div style="flex: 15; display: flex">
+					<div style="background-color: #0d2c55; flex: 3"></div>
+					<div style="background-color: #fefefe; flex: 3"></div>
+					<div style="background-color: #3c0b71; flex: 3"></div>
+					<div style="background-color: #1e1e1e; flex: 3"></div>
+				</div>
+				<div style="background-color: #151515; flex: 1"></div>
+				<div style="background-color: #1e1e1e; flex: 1"></div>
+				<div style="background-color: #282828; flex: 1"></div>
+				<div style="background-color: #1e1e1e; flex: 3"></div>
+			</div>
+		</div>
+		<video src="22-10-30_144.mp4" autoplay muted loop width="192" height="144" style="object-fit: fill;"></video>
+	</div>
+
+	<p>&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*</p>
+	<a href="https://www.instagram.com/__craftwerk/" rel="external">🧶</a> <a href="https://letterboxd.com/aisiaw/" rel="external">🎥</a>
+</main>
+</body>
+</html>
