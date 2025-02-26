@@ -1,180 +1,257 @@
 <html lang="en">
-<meta charset="UTF-8">
-<head>
-	<title>aisia dot ca</title>
-	<style>
-		.crt {
-			border-radius: 6px;
-			overflow: hidden;
-			position: relative;
-			width: fit-content;
+	<meta charset="UTF-8" />
+	<head>
+		<title>aisia dot ca</title>
+		<style>
+			.crt {
+				border-radius: 6px;
+				overflow: hidden;
+				position: relative;
+				width: fit-content;
 
-			& > * {
-				filter: blur(0.04rem) brightness(1.1);
+				& > * {
+					filter: blur(0.04rem) brightness(1.1);
+				}
 			}
-		}
 
-		.crt:before,
-		.crt:after {
-			display: block;
-			pointer-events: none;
-			content: "";
-			position: absolute;
-		}
+			.crt:before,
+			.crt:after {
+				display: block;
+				pointer-events: none;
+				content: "";
+				position: absolute;
+			}
 
-		.crt:before {
-			width: 100%;
-			height: 2px;
-			z-index: 2147483649;
-			background: linear-gradient(
+			.crt:before {
+				width: 100%;
+				height: 2px;
+				z-index: 2147483649;
+				background: linear-gradient(
 					to bottom,
 					transparent 25%,
 					rgba(0, 0, 0, 0.5) 50%,
 					transparent 75%
-			);
-			opacity: 0.75;
-			animation: unique-scanline 6s linear infinite;
-		}
+				);
+				opacity: 0.75;
+				animation: unique-scanline 6s linear infinite;
+			}
 
-		.crt:after {
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			z-index: 2147483648;
-			background: linear-gradient(
+			.crt:after {
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 2147483648;
+				background: linear-gradient(
 					to bottom,
 					transparent 10%,
 					rgba(0, 0, 0, 0.5) 50%,
 					transparent 90%
-			);
-			background-size: 100% 4px;
-			animation: scanlines 1s steps(60) infinite;
-		}
-
-		@keyframes unique-scanline {
-			0% {
-				transform: translate3d(0, 200000%, 0);
+				);
+				background-size: 100% 4px;
+				animation: scanlines 1s steps(60) infinite;
 			}
-		}
 
-		@keyframes scanlines {
-			0% {
-				background-position: 0 50%;
+			@keyframes unique-scanline {
+				0% {
+					transform: translate3d(0, 200000%, 0);
+				}
 			}
-		}
 
-		.centered-elements {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
+			@keyframes scanlines {
+				0% {
+					background-position: 0 50%;
+				}
+			}
 
-		a[rel~="external"]:after {
-			content: "\2197";
-		}
-
-		.smpte {
-			display: flex;
-			flex-direction: column;
-
-			& > * {
+			.centered-elements {
 				display: flex;
+				justify-content: center;
+				align-items: center;
 			}
-		}
 
-		.smpte-top {
-			flex: 96;
-
-			& > * {
-				flex: 1;
+			a[rel~="external"]:after {
+				content: "\2197";
 			}
-		}
 
-		.smpte-mid {
-			flex: 11;
+			.smpte {
+				display: flex;
+				flex-direction: column;
 
-			& > * {
-				flex: 1;
+				& > * {
+					display: flex;
+				}
 			}
-		}
 
-		.smpte-bot {
-			flex: 37;
-		}
+			.smpte-top {
+				flex: 96;
 
-		#panel:has(#comment-toggle:checked) ~ #comments {
-			height: 100px !important;
-		}
+				& > * {
+					flex: 1;
+				}
+			}
 
-		#player {
-			cursor: pointer;
-		}
-	</style>
+			.smpte-mid {
+				flex: 11;
 
-</head>
-<body class="centered-elements" style="background-color: lavender; color: indigo; height: 100vh; width: 100vw;">
-<main style="flex-direction: column">
-	<h1 style="font-weight: lighter; margin-bottom: 0.1em;">aisia.ca</h1>
-	<div class="crt">
-		<div style="width: 192px; height: 144px; position: absolute;" class="smpte">
-			<div class="smpte-top">
-				<div style="background-color: #c0c0c0;"></div>
-				<div style="background-color: #c3c31f;"></div>
-				<div style="background-color: #25c3c3;"></div>
-				<div style="background-color: #25c320;"></div>
-				<div style="background-color: #c31ac3;"></div>
-				<div style="background-color: #c31a15;"></div>
-				<div style="background-color: #0c0cc3;"></div>
-			</div>
-			<div class="smpte-mid">
-				<div style="background-color: #0c0cc3;"></div>
-				<div style="background-color: #1e1e1e;"></div>
-				<div style="background-color: #c31ac3;"></div>
-				<div style="background-color: #1e1e1e;"></div>
-				<div style="background-color: #25c3c3;"></div>
-				<div style="background-color: #1e1e1e;"></div>
-				<div style="background-color: #c3c3c3;"></div>
-			</div>
-			<div class="smpte-bot">
-				<div style="flex: 15; display: flex">
-					<div style="background-color: #0d2c55; flex: 3"></div>
-					<div style="background-color: #fefefe; flex: 3"></div>
-					<div style="background-color: #3c0b71; flex: 3"></div>
-					<div style="background-color: #1e1e1e; flex: 3"></div>
+				& > * {
+					flex: 1;
+				}
+			}
+
+			.smpte-bot {
+				flex: 37;
+			}
+
+			#panel:has(#comment-toggle:checked) ~ #comments {
+				height: 400px !important;
+			}
+
+			#comments {
+				border: none;
+				border-radius: 6px;
+				transition: height 0.5s;
+				height: 0;
+				overflow: hidden;
+				width: 192px;
+			}
+
+			.clickable {
+				cursor: pointer;
+			}
+
+			#player[data-muted="true"] ~ .mute-label {
+				display: unset !important;
+			}
+
+			.mute-label {
+				position: absolute;
+				margin: 13px;
+				color: #25c320;
+				top: 0;
+				left: 0;
+				font-weight: 900;
+				font-family: monospace;
+				display: none;
+			}
+
+			body {
+				margin: 0;
+				background-color: lavender;
+				color: indigo;
+				height: 100vh;
+				width: 100vw;
+			}
+		</style>
+	</head>
+	<body class="centered-elements" id="root">
+		<main style="flex-direction: column">
+			<h1 style="font-weight: lighter; margin-bottom: 0.1em">aisia.ca</h1>
+			<div class="crt">
+				<div
+					style="width: 192px; height: 144px; position: absolute"
+					class="smpte"
+				>
+					<div class="smpte-top">
+						<div style="background-color: #c0c0c0"></div>
+						<div style="background-color: #c3c31f"></div>
+						<div style="background-color: #25c3c3"></div>
+						<div style="background-color: #25c320"></div>
+						<div style="background-color: #c31ac3"></div>
+						<div style="background-color: #c31a15"></div>
+						<div style="background-color: #0c0cc3"></div>
+					</div>
+					<div class="smpte-mid">
+						<div style="background-color: #0c0cc3"></div>
+						<div style="background-color: #1e1e1e"></div>
+						<div style="background-color: #c31ac3"></div>
+						<div style="background-color: #1e1e1e"></div>
+						<div style="background-color: #25c3c3"></div>
+						<div style="background-color: #1e1e1e"></div>
+						<div style="background-color: #c3c3c3"></div>
+					</div>
+					<div class="smpte-bot">
+						<div style="flex: 15; display: flex">
+							<div style="background-color: #0d2c55; flex: 3"></div>
+							<div style="background-color: #fefefe; flex: 3"></div>
+							<div style="background-color: #3c0b71; flex: 3"></div>
+							<div style="background-color: #1e1e1e; flex: 3"></div>
+						</div>
+						<div style="background-color: #151515; flex: 1"></div>
+						<div style="background-color: #1e1e1e; flex: 1"></div>
+						<div style="background-color: #282828; flex: 1"></div>
+						<div style="background-color: #1e1e1e; flex: 3"></div>
+					</div>
 				</div>
-				<div style="background-color: #151515; flex: 1"></div>
-				<div style="background-color: #1e1e1e; flex: 1"></div>
-				<div style="background-color: #282828; flex: 1"></div>
-				<div style="background-color: #1e1e1e; flex: 3"></div>
+				<video
+					id="player"
+					src="22-10-30_144.mp4"
+					autoplay
+					muted
+					loop
+					width="192"
+					height="144"
+					style="object-fit: fill"
+					data-muted="true"
+				></video>
+				<p class="mute-label">MUTE</p>
 			</div>
-		</div>
-		<video id="player" src="22-10-30_144.mp4" autoplay muted loop width="192" height="144" style="object-fit: fill;"></video>
-	</div>
 
-	<p>&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*</p>
-	<div id="panel" style="margin-bottom: 0.5em">
-		<a href="https://www.instagram.com/__craftwerk/" rel="external">🧶</a>
-		<a href="https://letterboxd.com/aisiaw/" rel="external">🎥</a>
-		<label for="comment-toggle" style="cursor: pointer; position: relative">
-			✉️
-			<input id="comment-toggle" type="checkbox" style="cursor: pointer; position:absolute; left: 0; opacity: 0">
-		</label>
-	</div>
+			<p>&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*</p>
+			<div id="panel" style="margin-bottom: 0.5em">
+				<a href="https://www.instagram.com/__craftwerk/" rel="external">🧶</a>
+				<a href="https://letterboxd.com/aisiaw/" rel="external">🎥</a>
+				<label
+					for="comment-toggle"
+					style="position: relative"
+					class="clickable"
+				>
+					✉️
+					<input
+						id="comment-toggle"
+						type="checkbox"
+						style="position: absolute; left: 0; opacity: 0"
+						class="clickable"
+					/>
+				</label>
+			</div>
 
-	<div id="comments" style="transition: height 0.5s; height: 0; overflow: hidden; background-color: green; width: 192px">GUEST BOOK</div>
-	<!-- TODO implement a bob's server guest book -->
-	<!-- TODO add a bob's club link -->
+			<iframe
+				id="comments"
+				src="https://bobs-server.net/boxes/cm7lsrjhr00089tii7643oyz6"
+			>
+			</iframe>
+			<!-- TODO add a bob's club link -->
 
-	<script>
-		// TODO get a random background colour and fade into it
-		// TODO get a random video and overwrite the base one
-		// TODO get a random text colour and fade into it
+			<script>
+				const colours = [
+					{ font: "indigo", background: "lavender" },
+					{ font: "black", background: "mintcream" },
+					{ font: "#e6e6e6", background: "#282828" },
+					{ font: "rebeccapurple", background: "oldlace" },
+					{ font: "forestgreen", background: "chartreuse" },
+					{ font: "springgreen", background: "darkorange" },
+					{ font: "red", background: "greenyellow" },
+					{ font: "fuchsia", background: "cyan" },
+				];
 
-		// TODO is this even nice???
-		const player = document.getElementById('player');
-		player?.addEventListener('click', () => player.muted = !player.muted);
-	</script>
-</main>
-</body>
+				const videos = ["22-10-30_144.mp4"];
+
+				const player = document.getElementById("player");
+				const video = videos[Math.floor(Math.random() * videos.length)];
+				player.src = video;
+				player.addEventListener("click", () => {
+					player.muted = !player.muted;
+					player.dataset.muted = player.muted;
+				});
+				player.classList.add("clickable");
+
+				const selection = colours[Math.floor(Math.random() * colours.length)];
+
+				const body = document.getElementById("root");
+				body.style.backgroundColor = selection.background;
+				body.style.color = selection.font;
+			</script>
+		</main>
+	</body>
 </html>

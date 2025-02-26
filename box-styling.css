@@ -1,0 +1,147 @@
+body {
+	font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+}
+
+button:not(.delete-form-submit) {
+	border-radius: 24px;
+	height: 40px;
+	font-size: 20px;
+	line-height: 2px;
+	font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+	font-weight: bold;
+	text-align: center;
+	border: 1px solid;
+	background-color: cornflowerblue;
+	color: darkorange;
+	text-shadow: 1px 2px 0 sienna;
+}
+
+form.new-post-form {
+	border-radius: 12px;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 8px;
+	background-color: darkseagreen;
+}
+
+form.new-post-form > * {
+	margin: 4px 0;
+	display: block;
+}
+
+form.new-post-form > textarea {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+tr.post-row {
+	border-radius: 12px;
+	text-align: center;
+	vertical-align: middle;
+	display: block;
+	padding: 8px;
+	background-color: plum;
+}
+
+tr.post-row + tr.post-row {
+	margin-top: 1em;
+}
+
+.more-controls-details,
+.new-post-poster-label,
+.new-post-email-label,
+.box-name,
+.post-header {
+	display: none !important;
+}
+
+.box-body button {
+	margin-top: 1em;
+}
+
+.box-body button:hover {
+	cursor: pointer;
+}
+
+a.post-date-link {
+	color: unset;
+}
+
+tr.post-row td {
+	padding: 2px;
+	text-align: left;
+}
+
+tr.post-row > td.post-delete {
+	padding: 0;
+}
+
+td.post-delete:not(:has(> form)) {
+	display: none;
+}
+
+tr.post-row td.post-delete > form {
+	padding: 0;
+	margin: 0;
+	width: unset;
+	border: none;
+}
+
+tr.post-row td.post-delete > form > button {
+	margin: 0;
+	background: none;
+	border: none;
+	text-decoration: underline;
+	display: inline;
+}
+
+tr.post-row > td.post-message {
+	display: block;
+}
+
+td.post-message > .post-message-content,
+td.post-poster {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	word-break: normal;
+}
+
+table.post-table {
+	border: none;
+	width: 100%;
+	box-sizing: border-box;
+	border-collapse: collapse;
+}
+
+div.post-message-content {
+	font-size: 25px;
+}
+
+td.post-poster,
+td.post-date,
+td.post-reply {
+	font-size: 12px;
+}
+
+td.post-reply details > summary {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+td.post-reply:has(> details[open]) {
+	display: block;
+}
+
+blockquote.post-parent-content {
+	font-size: 14px;
+	font-style: italic;
+	border: 1px dotted;
+	border-radius: 4px;
+	padding: 0.5em;
+	margin: 0.5em;
+	color: #197398;
+}
+
+blockquote.post-parent-content > a {
+	color: #197398;
+}
