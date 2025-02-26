@@ -2,22 +2,51 @@ body {
 	font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
 }
 
-button:not(.delete-form-submit) {
-	border-radius: 24px;
+.new-post-submit {
 	height: 40px;
 	font-size: 20px;
 	line-height: 2px;
+	margin-top: 8px !important;
+	@media (min-width: 193px) {
+		height: 80px;
+		font-size: 40px;
+		line-height: 4px;
+		margin-top: 16px !important;
+	}
 	font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
 	font-weight: bold;
 	text-align: center;
 	border: 1px solid;
 	background-color: cornflowerblue;
-	color: darkorange;
-	text-shadow: 1px 2px 0 sienna;
+	color: rgba(255, 255, 255, 0);
+	position: relative;
+	width: 100%;
+	cursor: pointer;
+
+	&::after {
+		position: absolute;
+		color: #0c0cc3;
+		content: "✍️";
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+}
+
+.new-post-message {
+	height: 40px;
+	border-radius: 6px;
+	@media (min-width: 193px) {
+		border-radius: 12px;
+		height: 80px;
+	}
 }
 
 form.new-post-form {
-	border-radius: 12px;
+	border-radius: 6px;
+	@media (min-width: 193px) {
+		border-radius: 12px;
+	}
 	width: 100%;
 	box-sizing: border-box;
 	padding: 8px;
@@ -25,8 +54,15 @@ form.new-post-form {
 }
 
 form.new-post-form > * {
+	border-width: 0;
 	margin: 4px 0;
 	display: block;
+
+	border-radius: 6px;
+	@media (min-width: 193px) {
+		border-radius: 12px;
+		margin: 8px 0;
+	}
 }
 
 form.new-post-form > textarea {
@@ -35,10 +71,13 @@ form.new-post-form > textarea {
 }
 
 tr.post-row {
-	border-radius: 12px;
+	border-radius: 6px;
+	@media (min-width: 193px) {
+		border-radius: 12px;
+	}
 	text-align: center;
 	vertical-align: middle;
-	display: block;
+	display: grid;
 	padding: 8px;
 	background-color: plum;
 }
@@ -54,14 +93,6 @@ tr.post-row + tr.post-row {
 .new-post-email,
 .post-header {
 	display: none !important;
-}
-
-.box-body button {
-	margin-top: 1em;
-}
-
-.box-body button:hover {
-	cursor: pointer;
 }
 
 a.post-date-link {
@@ -94,6 +125,7 @@ tr.post-row td.post-delete > form > button {
 	border: none;
 	text-decoration: underline;
 	display: inline;
+	padding: 0;
 }
 
 tr.post-row > td.post-message {
@@ -116,12 +148,17 @@ table.post-table {
 
 div.post-message-content {
 	font-size: 25px;
+	@media (min-width: 193px) {
+		font-size: 50px;
+	}
 }
 
 td.post-poster,
-td.post-date,
-td.post-reply {
-	font-size: 12px;
+td.post-date {
+	font-size: 10px;
+	@media (min-width: 193px) {
+		font-size: 20px;
+	}
 }
 
 td.post-reply details > summary {
@@ -135,6 +172,9 @@ td.post-reply:has(> details[open]) {
 
 blockquote.post-parent-content {
 	font-size: 14px;
+	@media (min-width: 193px) {
+		font-size: 28px;
+	}
 	font-style: italic;
 	border: 1px dotted;
 	border-radius: 4px;
@@ -145,4 +185,20 @@ blockquote.post-parent-content {
 
 blockquote.post-parent-content > a {
 	color: #197398;
+}
+
+body {
+	margin: 0;
+}
+
+input {
+	width: 100%;
+}
+
+.post-reply {
+	display: none;
+}
+
+.new-post-message-label {
+	display: none !important;
 }
