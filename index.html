@@ -208,6 +208,22 @@
 			main:has(#letterboxd-link:hover) #letterboxd-preview {
 				display: unset;
 			}
+
+            @keyframes static {
+                100% {
+					background-position: 50% 0, 60% 50%
+				}
+            }
+
+			.static {
+				filter: blur(0.04rem) brightness(1.4);
+                background:
+                        repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%) 50% 0/2500px 2500px,
+                        repeating-conic-gradient(#000 0 0.0001%,#fff 0 0.0002%) 60% 60%/2500px 2500px;
+                background-blend-mode: difference;
+                animation: static .2s infinite steps(60) alternate;
+            }
+
 		</style>
 	</head>
 	<body class="centered-elements" id="root">
@@ -317,6 +333,13 @@
 			>
 			</iframe>
 			<!-- TODO add a bob's club link -->
+			<!-- TODO https://www.youtube.com/watch?v=JVBgTbzhSrk -->
+			<!-- TODO can i make a crt channel change effect? https://stackoverflow.com/questions/3331353/transitions-on-the-css-display-property -->
+			<!-- TODO https://www.reddit.com/r/web_design/comments/2t44kw/crt_screen_effect_with_css/ -->
+
+			<div class="crt">
+				<div class="crt-sized static"></div>
+			</div>
 
 			<script>
 				const colours = [
