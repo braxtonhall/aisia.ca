@@ -51,6 +51,7 @@ tr.post-row + tr.post-row {
 .new-post-poster-label,
 .new-post-email-label,
 .box-name,
+.new-post-email,
 .post-header {
 	display: none !important;
 }
