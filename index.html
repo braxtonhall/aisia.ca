@@ -10,7 +10,7 @@
 			width: fit-content;
 
 			& > * {
-                filter: blur(0.04rem) brightness(1.1);
+				filter: blur(0.04rem) brightness(1.1);
 			}
 		}
 
@@ -26,12 +26,12 @@
 			width: 100%;
 			height: 2px;
 			z-index: 2147483649;
-            background: linear-gradient(
-                    to bottom,
-                    transparent 25%,
-                    rgba(0, 0, 0, 0.5) 50%,
-                    transparent 75%
-            );
+			background: linear-gradient(
+					to bottom,
+					transparent 25%,
+					rgba(0, 0, 0, 0.5) 50%,
+					transparent 75%
+			);
 			opacity: 0.75;
 			animation: unique-scanline 6s linear infinite;
 		}
@@ -64,40 +64,51 @@
 			}
 		}
 
-        .centered-elements {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+		.centered-elements {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 
-        a[rel~="external"]:after {
-            content:"\2197";
-        }
+		a[rel~="external"]:after {
+			content: "\2197";
+		}
 
 		.smpte {
 			display: flex;
 			flex-direction: column;
+
 			& > * {
-                display: flex;
+				display: flex;
 			}
 		}
 
 		.smpte-top {
-            flex: 96;
+			flex: 96;
+
 			& > * {
 				flex: 1;
 			}
 		}
 
 		.smpte-mid {
-            flex: 11;
-            & > * {
-                flex: 1;
-            }
+			flex: 11;
+
+			& > * {
+				flex: 1;
+			}
 		}
 
 		.smpte-bot {
-            flex: 37;
+			flex: 37;
+		}
+
+		#panel:has(#comment-toggle:checked) ~ #comments {
+			height: 100px !important;
+		}
+
+		#player {
+			cursor: pointer;
 		}
 	</style>
 
@@ -138,11 +149,32 @@
 				<div style="background-color: #1e1e1e; flex: 3"></div>
 			</div>
 		</div>
-		<video src="22-10-30_144.mp4" autoplay muted loop width="192" height="144" style="object-fit: fill;"></video>
+		<video id="player" src="22-10-30_144.mp4" autoplay muted loop width="192" height="144" style="object-fit: fill;"></video>
 	</div>
 
 	<p>&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*</p>
-	<a href="https://www.instagram.com/__craftwerk/" rel="external">🧶</a> <a href="https://letterboxd.com/aisiaw/" rel="external">🎥</a>
+	<div id="panel" style="margin-bottom: 0.5em">
+		<a href="https://www.instagram.com/__craftwerk/" rel="external">🧶</a>
+		<a href="https://letterboxd.com/aisiaw/" rel="external">🎥</a>
+		<label for="comment-toggle" style="cursor: pointer; position: relative">
+			✉️
+			<input id="comment-toggle" type="checkbox" style="cursor: pointer; position:absolute; left: 0; opacity: 0">
+		</label>
+	</div>
+
+	<div id="comments" style="transition: height 0.5s; height: 0; overflow: hidden; background-color: green; width: 192px">GUEST BOOK</div>
+	<!-- TODO implement a bob's server guest book -->
+	<!-- TODO add a bob's club link -->
+
+	<script>
+		// TODO get a random background colour and fade into it
+		// TODO get a random video and overwrite the base one
+		// TODO get a random text colour and fade into it
+
+		// TODO is this even nice???
+		const player = document.getElementById('player');
+		player?.addEventListener('click', () => player.muted = !player.muted);
+	</script>
 </main>
 </body>
 </html>
