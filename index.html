@@ -115,6 +115,24 @@
 				}
 			}
 
+			#comment-toggle-label {
+				.closed {
+					display: unset;
+				}
+				.open {
+					display: none;
+				}
+
+				&:has(#comment-toggle:checked) {
+					.closed {
+						display: none;
+					}
+					.open {
+						display: unset;
+					}
+				}
+			}
+
 			#comments {
 				border: none;
 				border-radius: 6px;
@@ -226,11 +244,13 @@
 				<a href="https://www.instagram.com/__craftwerk/" rel="external">🧶</a>
 				<a href="https://letterboxd.com/aisiaw/" rel="external">🎥</a>
 				<label
+					id="comment-toggle-label"
 					for="comment-toggle"
 					style="position: relative"
 					class="clickable"
 				>
-					📖
+					<span class="closed"> 📘 </span>
+					<span class="open"> 📖 </span>
 					<input
 						id="comment-toggle"
 						type="checkbox"
