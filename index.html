@@ -3,11 +3,19 @@
 	<head>
 		<title>aisia dot ca</title>
 		<style>
-			.crt {
+			#crt {
 				border-radius: 6px;
 				overflow: hidden;
 				position: relative;
 				width: fit-content;
+				filter: brightness(1.2);
+
+				&.clickable:hover {
+					filter: brightness(1);
+					& .black {
+						animation: in-wipe 128ms linear 0s 1;
+					}
+				}
 
 				@media (orientation: portrait) {
 					border-radius: 12px;
@@ -18,15 +26,15 @@
 				}
 			}
 
-			.crt:before,
-			.crt:after {
+			#crt:before,
+			#crt:after {
 				display: block;
 				pointer-events: none;
 				content: "";
 				position: absolute;
 			}
 
-			.crt:before {
+			#crt:before {
 				width: 100%;
 				height: 2px;
 				z-index: 2147483649;
@@ -40,7 +48,7 @@
 				animation: unique-scanline 6s linear infinite;
 			}
 
-			.crt:after {
+			#crt:after {
 				top: 0;
 				right: 0;
 				bottom: 0;
@@ -281,6 +289,8 @@
 			}
 
 			.black {
+				width: 100%;
+				background-color: black;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -330,7 +340,7 @@
 			>
 				aisia<span class="sub">.ca</span>
 			</h1>
-			<div class="crt">
+			<div id="crt">
 				<div class="smpte crt-sized">
 					<div class="smpte-top">
 						<div style="background-color: #c0c0c0"></div>
@@ -389,13 +399,11 @@
 				<div id="static-container-container" class="crt-sized preview">
 					<div id="static-container">
 						<div id="static"></div>
-						<div
-							class="black"
-							style="width: 100%; background-color: black"
-						></div>
+						<div class="black"></div>
 					</div>
 				</div>
 				<p class="mute-label">MUTE</p>
+				<div class="black"></div>
 			</div>
 
 			<p>&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*</p>
@@ -455,13 +463,14 @@
 				// TODO add some default sounds that play on channel change, while over a preview, nothing playing
 
 				const player = document.getElementById("player");
+				const crt = document.getElementById("crt");
 				const video = videos[Math.floor(Math.random() * videos.length)];
 				player.src = video;
-				player.addEventListener("click", () => {
+				crt.addEventListener("click", () => {
 					player.muted = !player.muted;
 					player.dataset.muted = player.muted;
 				});
-				player.classList.add("clickable");
+				crt.classList.add("clickable");
 
 				const selection = colours[Math.floor(Math.random() * colours.length)];
 
