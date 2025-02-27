@@ -232,15 +232,8 @@
 			main:has(#letterboxd-link:hover) #letterboxd-preview {
 				visibility: visible;
 			}
-			@media (hover: none) {
-				main:has(#comment-toggle-label:active) .video {
-					visibility: hidden;
-				}
-			}
-			@media not (hover: none) {
-				main:has(#comment-toggle-label:hover) .video {
-					visibility: hidden;
-				}
+			main:has(#comment-toggle-label:hover) .video {
+				visibility: hidden;
 			}
 
 			@keyframes in-wipe {
@@ -339,22 +332,6 @@
 				animation: out-channel 128ms linear 0s 1;
 				.black {
 					animation: in-wipe 128ms linear 0s 1;
-				}
-			}
-			@media (hover: none) {
-				main:has(.previewable-button:active) #preview-change-static {
-					animation: out-channel 128ms linear 0s 1;
-					.black {
-						animation: in-wipe 128ms linear 0s 1;
-					}
-				}
-			}
-			@media not (hover: none) {
-				main:has(.previewable-button:hover) #preview-change-static {
-					animation: out-channel 128ms linear 0s 1;
-					.black {
-						animation: in-wipe 128ms linear 0s 1;
-					}
 				}
 			}
 
@@ -490,7 +467,7 @@
 					id="comment-toggle-label"
 					for="comment-toggle"
 					style="position: relative"
-					class="clickable previewable-button"
+					class="clickable previewable-link"
 				>
 					<span class="closed"> 📘 </span>
 					<span class="open"> 📖 </span>
