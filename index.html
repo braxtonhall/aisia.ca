@@ -10,12 +10,17 @@
 				width: fit-content;
 				filter: brightness(1.1);
 
-				@media not (hover: none) {
+				@media not all and (hover: none) {
 					&.clickable:hover {
 						filter: brightness(0.9);
 						.black {
 							animation: in-wipe 128ms linear 0s 1;
 						}
+					}
+				}
+				@media (hover: none) {
+					&.clickable:active .black {
+						animation: in-wipe 128ms linear 0s 1;
 					}
 				}
 
