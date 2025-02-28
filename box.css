@@ -1,3 +1,11 @@
+html {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
 body {
 	font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
 	margin: 0;
