@@ -668,19 +668,27 @@
 					"L1070797.mp4",
 					"L1070800.mp4",
 				];
+
+				for (let i = videos.length - 1; i > 0; i--) {
+					const j = Math.floor(Math.random() * (i + 1));
+					[videos[i], videos[j]] = [videos[j], videos[i]];
+				}
+
 				// TODO add some default sounds that play on channel change, while over a preview, nothing playing
 				const overlay = document.getElementById("video-loading-static");
 				const player = document.getElementById("player");
 				const crt = document.getElementById("crt");
 
+				let index = 0;
 				player.loop = false;
 				player.addEventListener("play", () =>
 					overlay.classList.remove("loading"),
 				);
 				const play = () => {
 					overlay.classList.add("loading");
-					const video = videos[Math.floor(Math.random() * videos.length)];
+					const video = videos[index];
 					player.src = `mp4/${video}`;
+					index = (index + 1) % videos.length;
 				};
 				player.addEventListener("ended", play);
 				play();
