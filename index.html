@@ -636,7 +636,91 @@
 			>
 			</iframe>
 
+			<script id="white-noise" type="x-audioworklet/javascript">
+				class RandomNoiseProcessor extends AudioWorkletProcessor {
+				  process(inputs, outputs, parameters) {
+					const output = outputs[0];
+					output.forEach((channel) => {
+					  for (let i = 0; i < channel.length; i++) {
+						channel[i] = Math.random() * 2 - 1;
+					  }
+					});
+					return true;
+				  }
+				}
+
+				registerProcessor("white-noise", RandomNoiseProcessor);
+			</script>
+
 			<script>
+				class Noise {
+					/**
+					 * @type GainNode
+					 */
+					ramp;
+					/**
+					 * @type GainNode
+					 */
+					mute;
+
+					static calculateRemainingTime({ gain, duration, target }) {
+						return Math.abs(gain - target) * duration;
+					}
+
+					constructor() {
+						this.context = new AudioContext();
+						this.ramp = this.context.createGain();
+						this.mute = this.context.createGain();
+						this.ramp.gain.value = 0;
+						this.mute.gain.value = 0;
+						this.ready = this.context.audioWorklet
+							.addModule(
+								"data:text/javascript," +
+									encodeURI(document.getElementById("white-noise").innerHTML),
+							)
+							.then(() => {
+								const noise = new AudioWorkletNode(this.context, "white-noise");
+								noise.connect(this.ramp);
+								this.ramp.connect(this.mute);
+								this.mute.connect(this.context.destination);
+							});
+					}
+
+					in({ seconds = 1 } = {}) {
+						return this.fade({ seconds, target: 1 });
+					}
+
+					out({ seconds = 1 } = {}) {
+						return this.fade({ seconds, target: 0 });
+					}
+
+					on() {
+						this.mute.gain.setValueAtTime(1, this.context.currentTime);
+						this.context.resume();
+					}
+
+					off() {
+						this.mute.gain.setValueAtTime(0, this.context.currentTime);
+					}
+
+					fade({ target, seconds }) {
+						const from = this.ramp.gain.value;
+						const duration = Noise.calculateRemainingTime({
+							gain: from,
+							duration: seconds,
+							target,
+						});
+						this.ramp.gain.cancelScheduledValues(this.context.currentTime);
+						this.ramp.gain.setValueAtTime(from, this.context.currentTime);
+						this.ramp.gain.linearRampToValueAtTime(
+							target,
+							this.context.currentTime + duration,
+						);
+					}
+				}
+
+				const noise = new Noise();
+
 				const colours = [
 					{ font: "indigo", background: "lavender" },
 					{ font: "black", background: "mintcream" },
@@ -693,10 +777,12 @@
 
 				let index = 0;
 				player.loop = false;
-				player.addEventListener("play", () =>
-					overlay.classList.remove("loading"),
-				);
+				player.addEventListener("play", () => {
+					overlay.classList.remove("loading");
+					noise.out({ seconds: 0.2 });
+				});
 				const play = () => {
+					noise.in({ seconds: 0.1 });
 					overlay.classList.add("loading");
 					const video = videos[index];
 					player.src = `mp4/${video}`;
@@ -708,6 +794,7 @@
 				crt.addEventListener("click", () => {
 					player.muted = !player.muted;
 					player.dataset.muted = player.muted;
+					player.muted ? noise.off() : noise.on();
 				});
 				crt.classList.add("clickable");
 
