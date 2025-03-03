@@ -662,12 +662,17 @@
 					 * @type GainNode
 					 */
 					mute;
+					/**
+					 * @type number
+					 */
+					volume
 
 					static calculateRemainingTime({ gain, duration, target }) {
 						return Math.abs(gain - target) * duration;
 					}
 
-					constructor() {
+					constructor(volume) {
+						this.volume = volume;
 						this.context = new AudioContext();
 						this.ramp = this.context.createGain();
 						this.mute = this.context.createGain();
@@ -686,16 +691,16 @@
 							});
 					}
 
-					in({ seconds = 1 } = {}) {
+					in({ seconds }) {
 						return this.fade({ seconds, target: 1 });
 					}
 
-					out({ seconds = 1 } = {}) {
+					out({ seconds }) {
 						return this.fade({ seconds, target: 0 });
 					}
 
 					on() {
-						this.mute.gain.setValueAtTime(1, this.context.currentTime);
+						this.mute.gain.setValueAtTime(this.volume, this.context.currentTime);
 						this.context.resume();
 					}
 
@@ -719,7 +724,7 @@
 					}
 				}
 
-				const noise = new Noise();
+				const noise = new Noise(0.4);
 
 				const colours = [
 					{ font: "indigo", background: "lavender" },
