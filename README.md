@@ -54,3 +54,4 @@ i'm not sure if it's because it's a palindrome, but to me it's a beatiful url. j
 
 - `for f in *.full.mp4 ; do ffmpeg -i "$f -s 192x144 ../mp4/"${f%.full.mp4}.mp4" ; done`
 - `ffmpeg -i lucycanontaro.mp4 -vf "scale=192x144:force_original_aspect_ratio=decrease,pad=192x144:-1:-1:color=black" ../mp4/lucycanontaro.mp4`
+- `ffmpeg -i v.mp4 -i a.wav -c:v copy -map 0:v:0 -map 1:a:0 new.mp4`
