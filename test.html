@@ -1,0 +1,620 @@
+<html lang="en">
+<meta charset="UTF-8"/>
+<head>
+	<title>aisia dot ca</title>
+	<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
+	<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"/>
+	<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"/>
+	<link rel="manifest" href="site.webmanifest"/>
+	<style>
+        .squircle {
+            border-radius: 6px;
+            @media (orientation: portrait) {
+                border-radius: 12px;
+            }
+        }
+
+        #crt {
+            overflow: hidden;
+            position: relative;
+            /*width: fit-content;*/
+            filter: brightness(1.1);
+
+            @media not all and (hover: none) {
+                &.clickable:hover {
+                    filter: brightness(0.9);
+
+                    .black {
+                        animation: in-wipe 128ms linear 0s 1;
+                    }
+                }
+            }
+            @media (hover: none) {
+                &.clickable:active .black {
+                    animation: in-wipe 128ms linear 0s 1;
+                }
+            }
+
+            & > * {
+                filter: blur(0.04rem) brightness(1.1);
+                position: absolute;
+                top: -1px;
+                left: -1px;
+                width: calc(192px + 2px);
+                height: calc(144px + 2px);
+                @media (orientation: portrait) {
+                    top: -2px;
+                    left: -2px;
+                    width: calc(384px + 4px);
+                    height: calc(288px + 4px);
+                }
+                pointer-events: none;
+            }
+
+            width: 192px;
+            height: 144px;
+            @media (orientation: portrait) {
+                width: 384px;
+                height: 288px;
+            }
+        }
+
+        #crt:before,
+        #crt:after {
+            display: block;
+            pointer-events: none;
+            content: "";
+            position: absolute;
+        }
+
+        #crt:before {
+            width: 100%;
+            height: 2px;
+            z-index: 2147483649;
+            background: linear-gradient(
+                    to bottom,
+                    transparent 25%,
+                    rgba(0, 0, 0, 0.3) 50%,
+                    transparent 75%
+            );
+            opacity: 0.75;
+            animation: unique-scanline 6s linear infinite;
+        }
+
+        #crt:after {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 2147483648;
+            background: linear-gradient(
+                    to bottom,
+                    transparent 10%,
+                    rgba(0, 0, 0, 0.3) 50%,
+                    transparent 90%
+            );
+            background-size: 100% 4px;
+            animation: scanlines 1s steps(60) infinite;
+        }
+
+        @keyframes unique-scanline {
+            0% {
+                transform: translate3d(0, 200000%, 0);
+            }
+        }
+
+        @keyframes scanlines {
+            0% {
+                background-position: 0 50%;
+            }
+        }
+
+        .centered-elements {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a[rel~="external"]:after {
+            content: "\2197";
+        }
+
+        .smpte {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+
+            & > * {
+                display: flex;
+            }
+        }
+
+        .smpte-top {
+            flex: 96;
+
+            & > * {
+                flex: 1;
+            }
+        }
+
+        .smpte-mid {
+            flex: 11;
+
+            & > * {
+                flex: 1;
+            }
+        }
+
+        .smpte-bot {
+            flex: 37;
+        }
+
+        :has(#comment-toggle:checked) #comments {
+            height: 400px !important;
+            @media (orientation: portrait) {
+                height: 800px !important;
+            }
+        }
+
+        :has(#bobs-club-toggle:checked) #bobs-club {
+            width: 104px !important;
+            @media (orientation: portrait) {
+                width: calc(208px) !important;
+            }
+        }
+
+        #bobs-club {
+            transition: width 0.5s;
+            width: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #bobs-club-main {
+            background-color: darkblue;
+            position: absolute;
+            left: 8px;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+
+            width: 96px;
+            padding: 6px;
+            @media (orientation: portrait) {
+                width: 192px;
+                padding: 12px;
+            }
+
+            > * {
+                flex: 1;
+            }
+        }
+
+        .bobs-club-link {
+            margin: 2px;
+            @media (orientation: portrait) {
+                margin: 4px;
+            }
+            background-color: mediumpurple;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &:has(span) {
+                font-size: 8px;
+                @media (orientation: portrait) {
+                    font-size: 16px;
+                }
+            }
+
+            span {
+                color: white;
+                font-family: "Courier New", monospace;
+            }
+        }
+
+        .toggle-label {
+            position: relative;
+
+            .closed {
+                display: unset;
+            }
+
+            .open {
+                display: none;
+            }
+
+            &:has(.toggle:checked) {
+                .closed {
+                    display: none;
+                }
+
+                .open {
+                    display: unset;
+                }
+            }
+        }
+
+        #comments {
+            border: none;
+            transition: height 0.5s;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .clickable {
+            cursor: pointer;
+        }
+
+        :has(#player[data-muted="true"]) .mute-label {
+            display: unset !important;
+        }
+
+        .mute-label {
+            margin: 13px;
+            position: absolute;
+            color: #25c320;
+            top: 0;
+            left: 0;
+            font-weight: 900;
+            font-family: monospace;
+            display: none;
+            font-size: 13px;
+            @media (orientation: portrait) {
+                font-size: 26px;
+                margin: 26px;
+            }
+        }
+
+        #counter {
+            margin: 13px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 13px;
+            @media (orientation: portrait) {
+                height: 23px;
+                margin: 26px;
+            }
+        }
+
+        body {
+            margin: 0;
+            background-color: lavender;
+            color: indigo;
+            width: 100%;
+            height: 100%;
+            font-size: 16px;
+
+            .sub {
+                font-size: 15px;
+            }
+
+            @media (orientation: portrait) {
+                font-size: 32px;
+                .sub {
+                    font-size: 30px;
+                }
+            }
+        }
+
+        .crt-sized {
+            width: 192px;
+            height: 144px;
+            @media (orientation: portrait) {
+                width: 384px;
+                height: 288px;
+            }
+        }
+
+        .crt-wide {
+            width: 192px;
+            @media (orientation: portrait) {
+                width: 384px;
+            }
+        }
+
+        .crt-tall {
+            height: 144px;
+            @media (orientation: portrait) {
+                height: 288px;
+            }
+        }
+
+        .preview {
+            visibility: hidden;
+        }
+
+        main:has(#craftwerk-link:hover) #craftwerk-preview {
+            visibility: visible;
+        }
+
+        main:has(#letterboxd-link:hover) #letterboxd-preview {
+            visibility: visible;
+        }
+
+        main:has(.toggle-label:hover) .video {
+            visibility: hidden;
+            display: none;
+        }
+
+        @keyframes in-wipe {
+            0% {
+                height: 0;
+            }
+            80% {
+                height: 70%;
+                top: 100%;
+            }
+        }
+
+        @keyframes out-wipe {
+            0% {
+                height: 70%;
+                top: 100%;
+            }
+            80% {
+                height: 0;
+            }
+        }
+
+        @keyframes in-channel {
+            0% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes out-channel {
+            0% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes hide-channel-on-load {
+            0% {
+                opacity: 0;
+            }
+            99% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        #preview-change-static-container {
+            animation: hide-channel-on-load 81ms linear 0s 1;
+            opacity: 1;
+        }
+
+        #preview-change-static {
+            visibility: visible;
+            animation: in-channel 80ms linear 0s 1;
+            opacity: 0;
+
+            .black {
+                animation: out-wipe 80ms linear 0s 1;
+            }
+        }
+
+        #video-loading-static {
+            opacity: 0;
+            animation: out-channel 128ms linear 0s 1;
+
+            .black {
+                animation: in-wipe 128ms linear 0s infinite;
+            }
+
+            &.loading {
+                opacity: 1;
+                visibility: visible;
+                animation: none;
+            }
+        }
+
+        .black {
+            width: 100%;
+            background-color: black;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 0;
+        }
+
+        main:has(.previewable-link:hover) #preview-change-static {
+            animation: out-channel 128ms linear 0s 1;
+
+            .black {
+                animation: in-wipe 128ms linear 0s 1;
+            }
+        }
+
+        @keyframes static {
+            100% {
+                background-position: 50% 0,
+                60% 50%;
+            }
+        }
+
+        .static {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            filter: blur(0.04rem) brightness(1.4);
+            background: repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%) 50% 0/2500px 2500px,
+            repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60% 60%/2500px 2500px;
+            background-blend-mode: difference;
+            animation: static 0.2s infinite steps(60) alternate;
+        }
+	</style>
+</head>
+<body class="centered-elements" id="root">
+<button id="on">on</button>
+<button id="off">off</button>
+
+<script id="noise-generators" type="x-audioworklet/javascript">
+	class WhiteNoiseProcessor extends AudioWorkletProcessor {
+	  process(inputs, outputs, parameters) {
+		const output = outputs[0];
+		output.forEach((channel) => {
+		  for (let i = 0; i < channel.length; i++) {
+			channel[i] = Math.random() * 2 - 1;
+		  }
+		});
+		return true;
+	  }
+	}
+
+	registerProcessor("white-noise", WhiteNoiseProcessor);
+
+	class PinkNoiseProcessor extends AudioWorkletProcessor {
+		memories = new Map();
+
+		memory(index) {
+			if (!this.memories.has(index)) {
+				this.memories.set(index, Array.from({length: 7}).fill(0))
+			}
+			return this.memories.get(index)
+		}
+
+		process(inputs, outputs, parameters) {
+			const output = outputs[0];
+			output.forEach((channel, i) => {
+				const memory = this.memory(i);
+				for (let i = 0; i < channel.length; i++) {
+					const white = Math.random() * 2 - 1;
+					memory[0] = 0.99886 * memory[0] + white * 0.0555179;
+					memory[1] = 0.99332 * memory[1] + white * 0.0750759;
+					memory[2] = 0.96900 * memory[2] + white * 0.1538520;
+					memory[3] = 0.86650 * memory[3] + white * 0.3104856;
+					memory[4] = 0.55000 * memory[4] + white * 0.5329522;
+					memory[5] = -0.7616 * memory[5] - white * 0.0168980;
+					channel[i] = memory[0] + memory[1] + memory[2] + memory[3] + memory[4] + memory[5] + memory[6] + white * 0.5362;
+					channel[i] *= 0.11; // (roughly) compensate for gain
+					memory[6] = white * 0.115926;
+				}
+			});
+			return true;
+		}
+	}
+
+	registerProcessor("pink-noise", PinkNoiseProcessor);
+</script>
+
+<script>
+	class Noise {
+		/**
+		 * @type GainNode
+		 */
+		ramp;
+		/**
+		 * @type GainNode
+		 */
+		mute;
+		/**
+		 * @type OscillatorNode
+		 */
+		whine;
+
+		static calculateRemainingTime({gain, duration, target}) {
+			return Math.abs(gain - target) * duration;
+		}
+
+		constructor({noiseVolume, sawtoothVolume, sawtoothFrequency, noiseColour}) {
+			this.context = new AudioContext();
+			this.ramp = this.context.createGain();
+			this.mute = this.context.createGain();
+			const noiseVolumeNode = this.context.createGain();
+			const sawtoothVolumeNode = this.context.createGain();
+			this.whine = this.context.createOscillator();
+			this.whine.type = "sawtooth";
+			this.whine.frequency.value = sawtoothFrequency;
+			noiseVolumeNode.gain.value = noiseVolume;
+			sawtoothVolumeNode.gain.value = sawtoothVolume;
+			this.ramp.gain.value = 0;
+			this.mute.gain.value = 0;
+			this.ready = this.context.audioWorklet
+				.addModule(
+					"data:text/javascript," +
+					encodeURI(document.getElementById("noise-generators").innerHTML),
+				)
+				.then(() => {
+					const noise = new AudioWorkletNode(this.context, `${noiseColour}-noise`);
+					noise.connect(noiseVolumeNode);
+					noiseVolumeNode.connect(this.ramp);
+					this.whine.connect(sawtoothVolumeNode);
+					sawtoothVolumeNode.connect(this.ramp);
+					this.ramp.connect(this.mute);
+					this.mute.connect(this.context.destination);
+				});
+		}
+
+		in({seconds}) {
+			return this.fade({seconds, target: 1});
+		}
+
+		out({seconds}) {
+			return this.fade({seconds, target: 0});
+		}
+
+		async init() {
+			if (this.initialized) {
+				return;
+			}
+			await this.ready;
+			if (!this.initialized) {
+				this.whine.start();
+				this.initialized = true;
+			}
+		}
+
+		async on() {
+			await this.init();
+			this.mute.gain.setValueAtTime(1, this.context.currentTime);
+			return this.context.resume();
+		}
+
+		off() {
+			this.mute.gain.setValueAtTime(0, this.context.currentTime);
+		}
+
+		fade({target, seconds}) {
+			const from = this.ramp.gain.value;
+			const duration = Noise.calculateRemainingTime({
+				gain: from,
+				duration: seconds,
+				target,
+			});
+			this.ramp.gain.cancelScheduledValues(this.context.currentTime);
+			this.ramp.gain.setValueAtTime(from, this.context.currentTime);
+			this.ramp.gain.linearRampToValueAtTime(
+				target,
+				this.context.currentTime + duration,
+			);
+		}
+	}
+
+	const noise = new Noise({sawtoothVolume: 0, sawtoothFrequency: 60, noiseVolume: 0.4, noiseColour: "pink"});
+
+	const on = document.getElementById('on');
+	on.addEventListener('click', () => noise.on(), {once: true});
+	on.addEventListener('click', () => noise.in({seconds: 1}))
+	document.getElementById('off').addEventListener('click', () => noise.out({seconds: 1}));
+
+</script>
+</body>
+</html>
