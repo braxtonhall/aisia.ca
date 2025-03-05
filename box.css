@@ -50,6 +50,7 @@ button {
 }
 
 .new-post-message {
+	resize: none;
 	height: 40px;
 	border-radius: 6px;
 	@media (min-width: 193px) {
