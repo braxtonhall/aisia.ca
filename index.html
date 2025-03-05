@@ -638,186 +638,255 @@
 				class="squircle crt-wide"
 			>
 			</iframe>
+		</main>
 
-			<script id="white-noise" type="x-audioworklet/javascript">
-				class RandomNoiseProcessor extends AudioWorkletProcessor {
-				  process(inputs, outputs, parameters) {
+		<script id="noise-generators" type="x-audioworklet/javascript">
+			class WhiteNoiseProcessor extends AudioWorkletProcessor {
+			  process(inputs, outputs, parameters) {
+				const output = outputs[0];
+				output.forEach((channel) => {
+				  for (let i = 0; i < channel.length; i++) {
+					channel[i] = Math.random() * 2 - 1;
+				  }
+				});
+				return true;
+			  }
+			}
+
+			registerProcessor("white-noise", WhiteNoiseProcessor);
+
+			class PinkNoiseProcessor extends AudioWorkletProcessor {
+				memories = new Map();
+
+				memory(index) {
+					if (!this.memories.has(index)) {
+						this.memories.set(index, Array.from({length: 7}).fill(0))
+					}
+					return this.memories.get(index)
+				}
+
+				process(inputs, outputs, parameters) {
 					const output = outputs[0];
-					output.forEach((channel) => {
-					  for (let i = 0; i < channel.length; i++) {
-						channel[i] = Math.random() * 2 - 1;
-					  }
+					output.forEach((channel, i) => {
+						const memory = this.memory(i);
+						for (let i = 0; i < channel.length; i++) {
+							const white = Math.random() * 2 - 1;
+							memory[0] = 0.99886 * memory[0] + white * 0.0555179;
+							memory[1] = 0.99332 * memory[1] + white * 0.0750759;
+							memory[2] = 0.96900 * memory[2] + white * 0.1538520;
+							memory[3] = 0.86650 * memory[3] + white * 0.3104856;
+							memory[4] = 0.55000 * memory[4] + white * 0.5329522;
+							memory[5] = -0.7616 * memory[5] - white * 0.0168980;
+							channel[i] = memory[0] + memory[1] + memory[2] + memory[3] + memory[4] + memory[5] + memory[6] + white * 0.5362;
+							channel[i] *= 0.11; // (roughly) compensate for gain
+							memory[6] = white * 0.115926;
+						}
 					});
 					return true;
-				  }
+				}
+			}
+
+			registerProcessor("pink-noise", PinkNoiseProcessor);
+		</script>
+
+		<script>
+			class Noise {
+				/**
+				 * @type GainNode
+				 */
+				ramp;
+				/**
+				 * @type GainNode
+				 */
+				mute;
+				/**
+				 * @type OscillatorNode
+				 */
+				whine;
+
+				static calculateRemainingTime({ gain, duration, target }) {
+					return Math.abs(gain - target) * duration;
 				}
 
-				registerProcessor("white-noise", RandomNoiseProcessor);
-			</script>
-
-			<script>
-				class Noise {
-					/**
-					 * @type GainNode
-					 */
-					ramp;
-					/**
-					 * @type GainNode
-					 */
-					mute;
-					/**
-					 * @type number
-					 */
-					volume
-
-					static calculateRemainingTime({ gain, duration, target }) {
-						return Math.abs(gain - target) * duration;
-					}
-
-					constructor(volume) {
-						this.volume = volume;
-						this.context = new AudioContext();
-						this.ramp = this.context.createGain();
-						this.mute = this.context.createGain();
-						this.ramp.gain.value = 0;
-						this.mute.gain.value = 0;
-						this.ready = this.context.audioWorklet
-							.addModule(
-								"data:text/javascript," +
-									encodeURI(document.getElementById("white-noise").innerHTML),
-							)
-							.then(() => {
-								const noise = new AudioWorkletNode(this.context, "white-noise");
-								noise.connect(this.ramp);
-								this.ramp.connect(this.mute);
-								this.mute.connect(this.context.destination);
-							});
-					}
-
-					in({ seconds }) {
-						return this.fade({ seconds, target: 1 });
-					}
-
-					out({ seconds }) {
-						return this.fade({ seconds, target: 0 });
-					}
-
-					on() {
-						this.mute.gain.setValueAtTime(this.volume, this.context.currentTime);
-						this.context.resume();
-					}
-
-					off() {
-						this.mute.gain.setValueAtTime(0, this.context.currentTime);
-					}
-
-					fade({ target, seconds }) {
-						const from = this.ramp.gain.value;
-						const duration = Noise.calculateRemainingTime({
-							gain: from,
-							duration: seconds,
-							target,
+				constructor({
+					noiseVolume,
+					sawtoothVolume,
+					sawtoothFrequency,
+					noiseColour,
+				}) {
+					this.context = new AudioContext();
+					this.ramp = this.context.createGain();
+					this.mute = this.context.createGain();
+					const noiseVolumeNode = this.context.createGain();
+					const sawtoothVolumeNode = this.context.createGain();
+					this.whine = this.context.createOscillator();
+					this.whine.type = "sawtooth";
+					this.whine.frequency.value = sawtoothFrequency;
+					noiseVolumeNode.gain.value = noiseVolume;
+					sawtoothVolumeNode.gain.value = sawtoothVolume;
+					this.ramp.gain.value = 0;
+					this.mute.gain.value = 0;
+					this.ready = this.context.audioWorklet
+						.addModule(
+							"data:text/javascript," +
+								encodeURI(
+									document.getElementById("noise-generators").innerHTML,
+								),
+						)
+						.then(() => {
+							const noise = new AudioWorkletNode(
+								this.context,
+								`${noiseColour}-noise`,
+							);
+							noise.connect(noiseVolumeNode);
+							noiseVolumeNode.connect(this.ramp);
+							this.whine.connect(sawtoothVolumeNode);
+							sawtoothVolumeNode.connect(this.ramp);
+							this.ramp.connect(this.mute);
+							this.mute.connect(this.context.destination);
 						});
-						this.ramp.gain.cancelScheduledValues(this.context.currentTime);
-						this.ramp.gain.setValueAtTime(from, this.context.currentTime);
-						this.ramp.gain.linearRampToValueAtTime(
-							target,
-							this.context.currentTime + duration,
-						);
+				}
+
+				in({ seconds }) {
+					return this.fade({ seconds, target: 1 });
+				}
+
+				out({ seconds }) {
+					return this.fade({ seconds, target: 0 });
+				}
+
+				async init() {
+					if (this.initialized) {
+						return;
+					}
+					await this.ready;
+					if (!this.initialized) {
+						this.whine.start();
+						this.initialized = true;
 					}
 				}
 
-				const noise = new Noise(0.4);
-
-				const colours = [
-					{ font: "indigo", background: "lavender" },
-					{ font: "black", background: "mintcream" },
-					{ font: "#e6e6e6", background: "#282828" },
-					{ font: "rebeccapurple", background: "oldlace" },
-					{ font: "forestgreen", background: "chartreuse" },
-					{ font: "springgreen", background: "darkorange" },
-					{ font: "red", background: "greenyellow" },
-					{ font: "mediumblue", background: "lightskyblue" },
-				];
-
-				const videos = [
-					{ src: "mp4/camping/L1070726.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070747.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070759.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070765.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070770.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070776.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070782.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070790.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070794.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070798.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070727.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070750.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070760.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070766.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070774.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070780.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070783.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070791.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070795.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070799.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070746.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070755.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070764.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070767.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070775.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070781.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070786.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070793.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070797.mp4", description: "", credits: "" },
-					{ src: "mp4/camping/L1070800.mp4", description: "", credits: "" },
-					{
-						src: "mp4/lucycanontaro.mp4",
-						description: "lucycanontaro - 2020",
-						credits: "lucy - alex g",
-					},
-				];
-
-				for (let i = videos.length - 1; i > 0; i--) {
-					const j = Math.floor(Math.random() * (i + 1));
-					[videos[i], videos[j]] = [videos[j], videos[i]];
+				async on() {
+					await this.init();
+					this.mute.gain.setValueAtTime(1, this.context.currentTime);
+					return this.context.resume();
 				}
 
-				// TODO add some default sounds that play on channel change, while over a preview, nothing playing
-				const overlay = document.getElementById("video-loading-static");
-				const player = document.getElementById("player");
-				const crt = document.getElementById("crt");
+				off() {
+					this.mute.gain.setValueAtTime(0, this.context.currentTime);
+				}
 
-				let index = 0;
-				player.loop = false;
-				player.addEventListener("play", () => {
-					overlay.classList.remove("loading");
-					noise.out({ seconds: 0.2 });
-				});
-				const play = () => {
-					noise.in({ seconds: 0.1 });
-					overlay.classList.add("loading");
-					const video = videos[index];
-					player.src = video.src;
-					index = (index + 1) % videos.length;
-				};
-				player.addEventListener("ended", play);
-				play();
+				fade({ target, seconds }) {
+					const from = this.ramp.gain.value;
+					const duration = Noise.calculateRemainingTime({
+						gain: from,
+						duration: seconds,
+						target,
+					});
+					this.ramp.gain.cancelScheduledValues(this.context.currentTime);
+					this.ramp.gain.setValueAtTime(from, this.context.currentTime);
+					this.ramp.gain.linearRampToValueAtTime(
+						target,
+						this.context.currentTime + duration,
+					);
+				}
+			}
 
-				crt.addEventListener("click", () => {
-					player.muted = !player.muted;
-					player.dataset.muted = player.muted;
-					player.muted ? noise.off() : noise.on();
-					crt.title = player.muted ? "umute" : "mute";
-				});
-				crt.title = "unmute";
-				crt.classList.add("clickable");
+			const noise = new Noise({
+				sawtoothVolume: 0.03,
+				sawtoothFrequency: 60,
+				noiseVolume: 0.03,
+				noiseColour: "pink",
+			});
 
-				const selection = colours[Math.floor(Math.random() * colours.length)];
-				const body = document.getElementById("root");
-				body.style.backgroundColor = selection.background;
-				body.style.color = selection.font;
-			</script>
-		</main>
+			const colours = [
+				{ font: "indigo", background: "lavender" },
+				{ font: "black", background: "mintcream" },
+				{ font: "#e6e6e6", background: "#282828" },
+				{ font: "rebeccapurple", background: "oldlace" },
+				{ font: "forestgreen", background: "chartreuse" },
+				{ font: "springgreen", background: "darkorange" },
+				{ font: "red", background: "greenyellow" },
+				{ font: "mediumblue", background: "lightskyblue" },
+			];
+
+			const videos = [
+				{ src: "mp4/camping/L1070726.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070747.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070759.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070765.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070770.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070776.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070782.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070790.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070794.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070798.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070727.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070750.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070760.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070766.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070774.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070780.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070783.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070791.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070795.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070799.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070746.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070755.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070764.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070767.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070775.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070781.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070786.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070793.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070797.mp4", description: "", credits: "" },
+				{ src: "mp4/camping/L1070800.mp4", description: "", credits: "" },
+				{
+					src: "mp4/lucycanontaro.mp4",
+					description: "lucycanontaro - 2020",
+					credits: "lucy - alex g",
+				},
+			];
+
+			for (let i = videos.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[videos[i], videos[j]] = [videos[j], videos[i]];
+			}
+
+			// TODO add some default sounds that play on channel change, while over a preview, nothing playing
+			const overlay = document.getElementById("video-loading-static");
+			const player = document.getElementById("player");
+			const crt = document.getElementById("crt");
+
+			let index = 0;
+			player.loop = false;
+			player.addEventListener("play", () => {
+				overlay.classList.remove("loading");
+				noise.out({ seconds: 0.2 });
+			});
+			const play = () => {
+				noise.in({ seconds: 0.1 });
+				overlay.classList.add("loading");
+				const video = videos[index];
+				player.src = video.src;
+				index = (index + 1) % videos.length;
+			};
+			player.addEventListener("ended", play);
+			play();
+
+			crt.addEventListener("click", () => {
+				player.muted = !player.muted;
+				player.dataset.muted = player.muted;
+				player.muted ? noise.off() : noise.on();
+				crt.title = player.muted ? "umute" : "mute";
+			});
+			crt.title = "unmute";
+			crt.classList.add("clickable");
+
+			const selection = colours[Math.floor(Math.random() * colours.length)];
+			const body = document.getElementById("root");
+			body.style.backgroundColor = selection.background;
+			body.style.color = selection.font;
+		</script>
 	</body>
 </html>
