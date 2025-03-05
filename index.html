@@ -792,10 +792,16 @@
 				}
 			}
 
-			const noise = new Noise({
-				sawtoothVolume: 0.03,
+			const whiteNoise = new Noise({
+				sawtoothVolume: 0,
 				sawtoothFrequency: 60,
-				noiseVolume: 0.03,
+				noiseVolume: 0.4,
+				noiseColour: "pink",
+			});
+			const pinkNoise = new Noise({
+				sawtoothVolume: 0.01,
+				sawtoothFrequency: 60,
+				noiseVolume: 0.007,
 				noiseColour: "pink",
 			});
 
@@ -862,10 +868,10 @@
 			player.loop = false;
 			player.addEventListener("play", () => {
 				overlay.classList.remove("loading");
-				noise.out({ seconds: 0.2 });
+				whiteNoise.out({ seconds: 0.2 });
 			});
 			const play = () => {
-				noise.in({ seconds: 0.1 });
+				whiteNoise.in({ seconds: 0.1 });
 				overlay.classList.add("loading");
 				const video = videos[index];
 				player.src = video.src;
@@ -877,7 +883,7 @@
 			crt.addEventListener("click", () => {
 				player.muted = !player.muted;
 				player.dataset.muted = player.muted;
-				player.muted ? noise.off() : noise.on();
+				player.muted ? whiteNoise.off() : whiteNoise.on();
 				crt.title = player.muted ? "umute" : "mute";
 			});
 			crt.title = "unmute";

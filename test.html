@@ -608,7 +608,7 @@
 		}
 	}
 
-	const noise = new Noise({sawtoothVolume: 0, sawtoothFrequency: 60, noiseVolume: 0.4, noiseColour: "pink"});
+	const noise = new Noise({sawtoothVolume: 0.01, sawtoothFrequency: 60, noiseVolume: 0.007, noiseColour: "pink"});
 
 	const on = document.getElementById('on');
 	on.addEventListener('click', () => noise.on(), {once: true});
