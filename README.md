@@ -10,8 +10,6 @@ i'm not sure if it's because it's a palindrome, but to me it's a beatiful url. j
 ## todo
 
 - [ ] replace the audio in each of the camping videos
-- [ ] add "white noise" to channel changes
-- [ ] add sawtooth/vhs noise to smpte channel
 - [ ] add a toggleable description overlay with video names/dates
 
 ## song credits
