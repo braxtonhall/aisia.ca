@@ -787,61 +787,72 @@
 		</script>
 
 		<script>
-			class Noise {
+			/**
+			 * @abstract
+			 */
+			class Node {
+				/**
+				 * @abstract
+				 * @type AudioNode
+				 */
+				node;
+
+				/**
+				 * @type AudioContext
+				 */
+				context;
+
+				/**
+				 * @param context {AudioContext}
+				 */
+				constructor(context) {
+					this.context = context;
+				}
+
+				/**
+				 * @param others {Node}
+				 * @return {this}
+				 */
+				addOutput(...others) {
+					others.forEach((node) => this.connect(node));
+					return this;
+				}
+
+				/**
+				 * @param others {Node}
+				 * @return {this}
+				 */
+				addInput(...others) {
+					others.forEach((node) => node.connect(this));
+					return this;
+				}
+
+				/**
+				 * @param other {Node}
+				 * @return {this}
+				 */
+				connect(other) {
+					this.node.connect(other.node);
+					return this;
+				}
+			}
+
+			class Fade extends Node {
 				/**
 				 * @type GainNode
 				 */
-				ramp;
+				node;
+
 				/**
-				 * @type GainNode
+				 * @param context {AudioContext}
 				 */
-				mute;
-				/**
-				 * @type OscillatorNode
-				 */
-				whine;
+				constructor(context) {
+					super(context);
+					this.node = this.context.createGain();
+				}
 
 				static calculateRemainingTime({ gain, duration, target }) {
 					return Math.abs(gain - target) * duration;
-				}
-
-				constructor({
-					noiseVolume,
-					sawtoothVolume,
-					sawtoothFrequency,
-					noiseColour,
-				}) {
-					this.context = new AudioContext();
-					this.ramp = this.context.createGain();
-					this.mute = this.context.createGain();
-					const noiseVolumeNode = this.context.createGain();
-					const sawtoothVolumeNode = this.context.createGain();
-					this.whine = this.context.createOscillator();
-					this.whine.type = "sawtooth";
-					this.whine.frequency.value = sawtoothFrequency;
-					noiseVolumeNode.gain.value = noiseVolume;
-					sawtoothVolumeNode.gain.value = sawtoothVolume;
-					this.ramp.gain.value = 0;
-					this.mute.gain.value = 0;
-					this.ready = this.context.audioWorklet
-						.addModule(
-							"data:text/javascript," +
-								encodeURI(
-									document.getElementById("noise-generators").innerHTML,
-								),
-						)
-						.then(() => {
-							const noise = new AudioWorkletNode(
-								this.context,
-								`${noiseColour}-noise`,
-							);
-							noise.connect(noiseVolumeNode);
-							noiseVolumeNode.connect(this.ramp);
-							this.whine.connect(sawtoothVolumeNode);
-							sawtoothVolumeNode.connect(this.ramp);
-							this.ramp.connect(this.mute);
-							this.mute.connect(this.context.destination);
-						});
 				}
 
 				in({ seconds }) {
@@ -852,43 +863,158 @@
 					return this.fade({ seconds, target: 0 });
 				}
 
-				async init() {
-					if (this.initialized) {
-						return;
-					}
-					await this.ready;
-					if (!this.initialized) {
-						this.whine.start();
-						this.initialized = true;
-					}
-				}
-
-				async on() {
-					await this.init();
-					this.mute.gain.setValueAtTime(1, this.context.currentTime);
-					return this.context.resume();
-				}
-
-				off() {
-					this.mute.gain.setValueAtTime(0, this.context.currentTime);
-				}
-
 				fade({ target, seconds }) {
-					const from = this.ramp.gain.value;
-					const duration = Noise.calculateRemainingTime({
+					const from = this.node.gain.value;
+					const duration = Fade.calculateRemainingTime({
 						gain: from,
 						duration: seconds,
 						target,
 					});
-					this.ramp.gain.cancelScheduledValues(this.context.currentTime);
-					this.ramp.gain.setValueAtTime(from, this.context.currentTime);
-					this.ramp.gain.linearRampToValueAtTime(
+					this.node.gain.cancelScheduledValues(this.context.currentTime);
+					this.node.gain.setValueAtTime(from, this.context.currentTime);
+					this.node.gain.linearRampToValueAtTime(
 						target,
 						this.context.currentTime + duration,
 					);
+					return this;
 				}
 			}
 
+			class Oscillator extends Node {
+				/**
+				 * @type OscillatorNode
+				 */
+				node;
+
+				/**
+				 *
+				 * @param context {AudioContext}
+				 * @param type {OscillatorType}
+				 * @param frequency {number}
+				 */
+				constructor(context, type, frequency) {
+					super(context);
+					this.node = this.context.createOscillator();
+					this.node.type = type;
+					this.node.frequency.value = frequency;
+					this.node.start();
+				}
+			}
+
+			class Master extends Node {
+				/**
+				 * @type GainNode
+				 */
+				node;
+
+				/**
+				 *
+				 * @param context {AudioContext}
+				 */
+				constructor(context) {
+					super(context);
+					this.node = this.context.createGain();
+					this.node.connect(this.context.destination);
+				}
+
+				on() {
+					this.node.gain.setValueAtTime(1, this.context.currentTime);
+					return this.context.resume();
+				}
+
+				off() {
+					this.node.gain.setValueAtTime(0, this.context.currentTime);
+				}
+			}
+
+			class Noise extends Node {
+				/**
+				 * @type {Promise<void> | undefined}
+				 */
+				static ready;
+
+				/**
+				 *
+				 * @param context {AudioContext}
+				 * @return {Promise<void>}
+				 */
+				static getReady(context) {
+					if (!Noise.ready) {
+						Noise.ready = context.audioWorklet.addModule(
+							"data:text/javascript," +
+								encodeURI(
+									document.getElementById("noise-generators").innerHTML,
+								),
+						);
+					}
+					return Noise.ready;
+				}
+
+				/**
+				 * @type AudioWorkletNode
+				 */
+				node;
+
+				/**
+				 * @type Promise<void>
+				 */
+				ready;
+
+				/**
+				 *
+				 * @param context {AudioContext}
+				 * @param type {"pink" | "white"}
+				 */
+				constructor(context, type) {
+					super(context);
+					this.ready = Noise.getReady(context).then(() => {
+						this.node = new AudioWorkletNode(this.context, `${type}-noise`);
+					});
+				}
+
+				connect(other) {
+					this.ready.then(() => super.connect(other));
+					return this;
+				}
+			}
+
+			class Media extends Node {
+				/**
+				 * @type MediaElementAudioSourceNode
+				 */
+				node;
+
+				/**
+				 *
+				 * @param context {AudioContext}
+				 * @param media {HTMLMediaElement}
+				 */
+				constructor(context, media) {
+					super(context);
+					this.node = this.context.createMediaElementSource(media);
+				}
+			}
+
+			class Clamp extends Node {
+				/**
+				 * @type GainNode
+				 */
+				node;
+
+				/**
+				 *
+				 * @param context {AudioContext}
+				 * @param value {number}
+				 */
+				constructor(context, value) {
+					super(context);
+					this.node = this.context.createGain();
+					this.node.gain.value = value;
+				}
+			}
+		</script>
+
+		<script>
 			const colours = [
 				{ font: "indigo", background: "lavender" },
 				{ font: "black", background: "mintcream" },
@@ -1060,36 +1186,49 @@
 		</script>
 
 		<script>
-			const videoChangeStatic = new Noise({
-				sawtoothVolume: 0,
-				sawtoothFrequency: 0,
-				noiseVolume: 0.1,
-				noiseColour: "pink",
-			});
-			const channelChangeStatic = new Noise({
-				sawtoothVolume: 0,
-				sawtoothFrequency: 0,
-				noiseVolume: 0.1,
-				noiseColour: "pink",
-			});
-			const previewStatic = new Noise({
-				sawtoothVolume: 0.01,
-				sawtoothFrequency: 60,
-				noiseVolume: 0.007,
-				noiseColour: "pink",
-			});
-
-			for (let i = videos.length - 1; i > 0; i--) {
-				const j = Math.floor(Math.random() * (i + 1));
-				[videos[i], videos[j]] = [videos[j], videos[i]];
-			}
-
 			const description = document.getElementById("video-description");
 			const credits = document.getElementById("video-credits");
 			const overlay = document.getElementById("video-loading-static");
 			const player = document.getElementById("player");
 			const storage = document.getElementById("storage");
 			const muteControl = document.getElementById("mute-control");
+			const previewLinks = document.getElementsByClassName("previewable-link");
+		</script>
+
+		<script>
+			const context = new AudioContext();
+			const master = new Master(context);
+
+			const videoControl = new Fade(context)
+				.addOutput(master)
+				.addInput(new Media(context, player));
+
+			const videoChangeStatic = new Fade(context)
+				.out({ seconds: 0 })
+				.addInput(new Noise(context, "pink"))
+				.addOutput(new Clamp(context, 0.1).addOutput(videoControl));
+
+			const channelChangeStatic = new Fade(context)
+				.out({ seconds: 0 })
+				.addInput(new Noise(context, "pink"))
+				.addOutput(new Clamp(context, 0.1).addOutput(master));
+
+			const previewStatic = new Fade(context)
+				.out({ seconds: 0 })
+				.addInput(
+					new Clamp(context, 0.01).addInput(
+						new Oscillator(context, "sawtooth", 60),
+					),
+				)
+				.addInput(
+					new Clamp(context, 0.007).addInput(new Noise(context, "pink")),
+				)
+				.addOutput(master);
+
+			for (let i = videos.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[videos[i], videos[j]] = [videos[j], videos[i]];
+			}
 
 			player.loop = false;
 			player.addEventListener("canplay", () => {
@@ -1097,8 +1236,8 @@
 				videoChangeStatic.out({ seconds: 0.2 });
 			});
 			const play = (index) => () => {
-				videoChangeStatic.in({ seconds: 0.1 });
 				overlay.classList.add("loading");
+				videoChangeStatic.in({ seconds: 0.1 });
 				const video = videos[index];
 				player.src = video.src;
 				description.innerText = video.description;
@@ -1109,56 +1248,18 @@
 			};
 			play(0)();
 
-			let videoMuteTimeout;
-			const setVideoMute = (muted) => {
-				clearTimeout(videoMuteTimeout);
-				if (muted) {
-					player.muted = muted;
-				} else {
-					videoMuteTimeout = setTimeout(() => (player.muted = muted), 50);
-				}
-			};
-
 			let muted = true;
-
-			const syncPlayerMute = (hovering) => {
-				/**
-				 * this code is unbearable.
-				 * really the noise should have N mute toggles
-				 */
-				if (muted) {
-					setVideoMute(true);
-					previewStatic.out({ seconds: 0.1 });
-					videoChangeStatic.off();
-				} else if (hovering) {
-					setVideoMute(true);
-					previewStatic.in({ seconds: 0.1 });
-					videoChangeStatic.off();
-				} else {
-					setVideoMute(false);
-					previewStatic.out({ seconds: 0.1 });
-					videoChangeStatic.on();
-					// in case we were hovering while the video changed
-					player.play();
-				}
-			};
-
 			muteControl.addEventListener("click", () => {
 				muted = !muted;
 				storage.dataset.muted = muted;
 				if (muted) {
 					muteControl.title = "umute";
-					channelChangeStatic.off();
-					previewStatic.off();
+					master.off();
 				} else {
 					muteControl.title = "mute";
-					channelChangeStatic.on();
-					previewStatic.on();
+					master.on();
+					player.muted = false;
 				}
-				syncPlayerMute(document.querySelector(".previewable-link:hover"));
-			});
-			muteControl.addEventListener("click", () => previewStatic.on(), {
-				once: true,
 			});
 			muteControl.title = "unmute";
 			muteControl.classList.add("clickable");
@@ -1171,12 +1272,18 @@
 					() => channelChangeStatic.out({ seconds: 0.2 }),
 					100,
 				);
-				syncPlayerMute(hovering);
+				if (hovering) {
+					videoControl.out({ seconds: 0.1 });
+					previewStatic.in({ seconds: 0.1 });
+				} else {
+					videoControl.in({ seconds: 0.2 });
+					previewStatic.out({ seconds: 0.1 });
+					// in case we were hovering while the video changed
+					player.play();
+				}
 			};
 
-			for (const element of document.getElementsByClassName(
-				"previewable-link",
-			)) {
+			for (const element of previewLinks) {
 				element.addEventListener("mouseenter", changeChannel(true));
 				element.addEventListener("mouseleave", changeChannel(false));
 			}
