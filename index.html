@@ -1186,6 +1186,7 @@
 		</script>
 
 		<script>
+			// elements
 			const description = document.getElementById("video-description");
 			const credits = document.getElementById("video-credits");
 			const overlay = document.getElementById("video-loading-static");
@@ -1193,9 +1194,8 @@
 			const storage = document.getElementById("storage");
 			const muteControl = document.getElementById("mute-control");
 			const previewLinks = document.getElementsByClassName("previewable-link");
-		</script>
 
-		<script>
+			// audio controls
 			const context = new AudioContext();
 			const master = new Master(context);
 
@@ -1225,6 +1225,7 @@
 				)
 				.addOutput(master);
 
+			// logic!
 			for (let i = videos.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
 				[videos[i], videos[j]] = [videos[j], videos[i]];
