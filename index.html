@@ -17,7 +17,6 @@
 			#crt {
 				overflow: hidden;
 				position: relative;
-				/*width: fit-content;*/
 				filter: brightness(1.1);
 
 				@media not all and (hover: none) {
@@ -56,6 +55,7 @@
 				#controls {
 					display: flex;
 					flex-direction: column;
+					position: relative;
 					& > * {
 						flex: 1;
 						width: 100%;
@@ -63,6 +63,36 @@
 
 					#mute-control:not(.clickable) {
 						display: none;
+					}
+
+					#info-control {
+						position: relative;
+						width: 100%;
+						height: 100%;
+						label {
+							display: block;
+							width: 100%;
+							height: 100%;
+							top: 0;
+							left: 0;
+							position: absolute;
+							input {
+								box-sizing: border-box;
+								width: 100%;
+								height: 100%;
+								opacity: 0;
+							}
+							pointer-events: none;
+						}
+					}
+
+					&:has(#info-off:checked) label:has(#info-description),
+					&:has(#info-description:checked):has(#mute-control.clickable)
+						label:has(#info-credits),
+					&:has(#info-description:checked):has(#mute-control:not(.clickable))
+						label:has(#info-off),
+					&:has(#info-credits:checked) label:has(#info-off) {
+						pointer-events: unset !important;
 					}
 				}
 
@@ -251,7 +281,8 @@
 				overflow: hidden;
 			}
 
-			.clickable {
+			.clickable,
+			.clickable * {
 				cursor: pointer;
 			}
 
@@ -259,7 +290,11 @@
 				display: unset !important;
 			}
 
-			:has(#storage[data-show-description="true"]) #video-description {
+			:has(#info-description:checked) #video-description {
+				display: unset !important;
+			}
+
+			:has(#info-credits:checked) #video-credits {
 				display: unset !important;
 			}
 
@@ -490,12 +525,7 @@
 		</style>
 	</head>
 	<body class="centered-elements" id="root">
-		<div
-			id="storage"
-			style="display: none"
-			data-muted="true"
-			data-show-description="true"
-		></div>
+		<div id="storage" style="display: none" data-muted="true"></div>
 		<main style="flex-direction: column">
 			<h1
 				style="
@@ -596,7 +626,19 @@
 					</div>
 					<div id="controls">
 						<div id="mute-control"></div>
-						<div class="clickable" onclick="alert('test')" style=""></div>
+						<div id="info-control" class="clickable">
+							<label for="info-off" title="hide information">
+								<input id="info-off" name="info-control" type="radio" checked />
+							</label>
+
+							<label for="info-description" title="show description">
+								<input id="info-description" name="info-control" type="radio" />
+							</label>
+
+							<label for="info-credits" title="show credits">
+								<input id="info-credits" name="info-control" type="radio" />
+							</label>
+						</div>
 					</div>
 				</div>
 				<div id="bobs-club" class="crt-tall squircle">
@@ -857,36 +899,156 @@
 			];
 
 			const videos = [
-				{ src: "mp4/camping/L1070726.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070747.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070759.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070765.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070770.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070776.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070782.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070790.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070794.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070798.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070727.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070750.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070760.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070766.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070774.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070780.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070783.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070791.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070795.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070799.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070746.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070755.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070764.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070767.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070775.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070781.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070786.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070793.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070797.mp4", description: "", credits: "" },
-				{ src: "mp4/camping/L1070800.mp4", description: "", credits: "" },
+				{
+					src: "mp4/camping/L1070726.mp4",
+					description: "L1070726",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070747.mp4",
+					description: "L1070747",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070759.mp4",
+					description: "L1070759",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070765.mp4",
+					description: "L1070765",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070770.mp4",
+					description: "L1070770",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070776.mp4",
+					description: "L1070776",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070782.mp4",
+					description: "L1070782",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070790.mp4",
+					description: "L1070790",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070794.mp4",
+					description: "L1070794",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070798.mp4",
+					description: "L1070798",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070727.mp4",
+					description: "L1070727",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070750.mp4",
+					description: "L1070750",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070760.mp4",
+					description: "L1070760",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070766.mp4",
+					description: "L1070766",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070774.mp4",
+					description: "L1070774",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070780.mp4",
+					description: "L1070780",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070783.mp4",
+					description: "L1070783",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070791.mp4",
+					description: "L1070791",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070795.mp4",
+					description: "L1070795",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070799.mp4",
+					description: "L1070799",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070746.mp4",
+					description: "L1070746",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070755.mp4",
+					description: "L1070755",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070764.mp4",
+					description: "L1070764",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070767.mp4",
+					description: "L1070767",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070775.mp4",
+					description: "L1070775",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070781.mp4",
+					description: "L1070781",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070786.mp4",
+					description: "L1070786",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070793.mp4",
+					description: "L1070793",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070797.mp4",
+					description: "L1070797",
+					credits: "-",
+				},
+				{
+					src: "mp4/camping/L1070800.mp4",
+					description: "L1070800",
+					credits: "-",
+				},
 				{
 					src: "mp4/lucycanontaro.mp4",
 					description: "lucycanontaro - 2020",
