@@ -21,7 +21,7 @@
 				filter: brightness(1.1);
 
 				@media not all and (hover: none) {
-					&.clickable:hover {
+					&:has(.clickable:hover) {
 						filter: brightness(0.9);
 						.black {
 							animation: in-wipe 128ms linear 0s 1;
@@ -29,7 +29,7 @@
 					}
 				}
 				@media (hover: none) {
-					&.clickable:active .black {
+					&:has(.clickable:active) .black {
 						animation: in-wipe 128ms linear 0s 1;
 					}
 				}
@@ -47,7 +47,23 @@
 						width: calc(384px + 4px);
 						height: calc(288px + 4px);
 					}
+				}
+
+				& > :not(#controls) {
 					pointer-events: none;
+				}
+
+				#controls {
+					display: flex;
+					flex-direction: column;
+					& > * {
+						flex: 1;
+						width: 100%;
+					}
+
+					#mute-control:not(.clickable) {
+						display: none;
+					}
 				}
 
 				width: 192px;
@@ -239,7 +255,11 @@
 				cursor: pointer;
 			}
 
-			:has(#storage[data-muted="true"]) .mute-label {
+			:has(#storage[data-muted="true"]) #mute-label {
+				display: unset !important;
+			}
+
+			:has(#storage[data-show-description="true"]) #video-description {
 				display: unset !important;
 			}
 
@@ -247,12 +267,26 @@
 				background-color: black;
 			}
 
-			.mute-label {
+			#mute-label {
+				top: 0;
+				left: 0;
+			}
+
+			.video-info {
+				bottom: 0;
+				left: 0;
+			}
+
+			#video-credits {
+			}
+
+			#video-description {
+			}
+
+			.crt-text {
 				margin: 13px;
 				position: absolute;
 				color: #25c320;
-				top: 0;
-				left: 0;
 				font-weight: 900;
 				font-family: monospace;
 				display: none;
@@ -456,7 +490,12 @@
 		</style>
 	</head>
 	<body class="centered-elements" id="root">
-		<div id="storage" style="display: none" data-muted="true"></div>
+		<div
+			id="storage"
+			style="display: none"
+			data-muted="true"
+			data-show-description="true"
+		></div>
 		<main style="flex-direction: column">
 			<h1
 				style="
@@ -517,6 +556,16 @@
 						muted
 						loop
 					></video>
+					<div>
+						<p id="video-description" class="crt-text video-info video">
+							lucycanontaro - 2020
+						</p>
+					</div>
+					<div>
+						<p id="video-credits" class="crt-text video-info video">
+							lucy - alex g
+						</p>
+					</div>
 					<div id="video-loading-static" class="preview video">
 						<div class="static"></div>
 						<div class="black"></div>
@@ -540,10 +589,14 @@
 						</div>
 					</div>
 					<div>
-						<p class="mute-label">MUTE</p>
+						<p id="mute-label" class="crt-text">MUTE</p>
 					</div>
 					<div>
 						<div class="black"></div>
+					</div>
+					<div id="controls">
+						<div id="mute-control"></div>
+						<div class="clickable" onclick="alert('test')" style=""></div>
 					</div>
 				</div>
 				<div id="bobs-club" class="crt-tall squircle">
@@ -867,10 +920,12 @@
 				[videos[i], videos[j]] = [videos[j], videos[i]];
 			}
 
+			const description = document.getElementById("video-description");
+			const credits = document.getElementById("video-credits");
 			const overlay = document.getElementById("video-loading-static");
 			const player = document.getElementById("player");
-			const crt = document.getElementById("crt");
 			const storage = document.getElementById("storage");
+			const muteControl = document.getElementById("mute-control");
 
 			player.loop = false;
 			player.addEventListener("canplay", () => {
@@ -882,6 +937,8 @@
 				overlay.classList.add("loading");
 				const video = videos[index];
 				player.src = video.src;
+				description.innerText = video.description;
+				credits.innerText = video.credits;
 				player.addEventListener("ended", play((index + 1) % videos.length), {
 					once: true,
 				});
@@ -922,23 +979,25 @@
 				}
 			};
 
-			crt.addEventListener("click", () => {
+			muteControl.addEventListener("click", () => {
 				muted = !muted;
 				storage.dataset.muted = muted;
 				if (muted) {
-					crt.title = "umute";
+					muteControl.title = "umute";
 					channelChangeStatic.off();
 					previewStatic.off();
 				} else {
-					crt.title = "mute";
+					muteControl.title = "mute";
 					channelChangeStatic.on();
 					previewStatic.on();
 				}
 				syncPlayerMute(document.querySelector(".previewable-link:hover"));
 			});
-			crt.addEventListener("click", () => previewStatic.on(), { once: true });
-			crt.title = "unmute";
-			crt.classList.add("clickable");
+			muteControl.addEventListener("click", () => previewStatic.on(), {
+				once: true,
+			});
+			muteControl.title = "unmute";
+			muteControl.classList.add("clickable");
 
 			let clearStaticTimeout;
 			const changeChannel = (hovering) => () => {
