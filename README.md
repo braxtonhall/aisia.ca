@@ -11,7 +11,9 @@ i'm not sure if it's because it's a palindrome, but to me it's a beatiful url. j
 
 - [ ] replace the audio in each of the camping videos
 - [ ] media session integration
-- [ ] mute and stop video when leaving the page, and resume when returning 
+- [ ] mute and stop video when leaving the page, and resume when returning
+- [ ] rewrite noise stuff
+- [ ] handle clipping sound when audio mutes by giving it a ramp https://stackoverflow.com/questions/15118524/get-audio-from-an-html5-video 
 
 ## song credits
 
