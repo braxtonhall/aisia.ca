@@ -10,6 +10,8 @@ i'm not sure if it's because it's a palindrome, but to me it's a beatiful url. j
 ## todo
 
 - [ ] replace the audio in each of the camping videos
+- [ ] media session integration
+- [ ] mute and stop video when leaving the page, and resume when returning 
 
 ## song credits
 
