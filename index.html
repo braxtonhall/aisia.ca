@@ -239,7 +239,7 @@
 				cursor: pointer;
 			}
 
-			:has(#player[data-muted="true"]) .mute-label {
+			:has(#storage[data-muted="true"]) .mute-label {
 				display: unset !important;
 			}
 
@@ -456,6 +456,7 @@
 		</style>
 	</head>
 	<body class="centered-elements" id="root">
+		<div id="storage" style="display: none" data-muted="true"></div>
 		<main style="flex-direction: column">
 			<h1
 				style="
@@ -515,7 +516,6 @@
 						autoplay
 						muted
 						loop
-						data-muted="true"
 					></video>
 					<div id="video-loading-static" class="preview video">
 						<div class="static"></div>
@@ -792,19 +792,6 @@
 				}
 			}
 
-			const whiteNoise = new Noise({
-				sawtoothVolume: 0,
-				sawtoothFrequency: 60,
-				noiseVolume: 0.4,
-				noiseColour: "pink",
-			});
-			const pinkNoise = new Noise({
-				sawtoothVolume: 0.01,
-				sawtoothFrequency: 60,
-				noiseVolume: 0.007,
-				noiseColour: "pink",
-			});
-
 			const colours = [
 				{ font: "indigo", background: "lavender" },
 				{ font: "black", background: "mintcream" },
@@ -853,41 +840,123 @@
 					credits: "lucy - alex g",
 				},
 			];
+		</script>
+
+		<script>
+			const videoChangeStatic = new Noise({
+				sawtoothVolume: 0,
+				sawtoothFrequency: 0,
+				noiseVolume: 0.1,
+				noiseColour: "pink",
+			});
+			const channelChangeStatic = new Noise({
+				sawtoothVolume: 0,
+				sawtoothFrequency: 0,
+				noiseVolume: 0.1,
+				noiseColour: "pink",
+			});
+			const previewStatic = new Noise({
+				sawtoothVolume: 0.01,
+				sawtoothFrequency: 60,
+				noiseVolume: 0.007,
+				noiseColour: "pink",
+			});
 
 			for (let i = videos.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
 				[videos[i], videos[j]] = [videos[j], videos[i]];
 			}
 
-			// TODO add some default sounds that play on channel change, while over a preview, nothing playing
 			const overlay = document.getElementById("video-loading-static");
 			const player = document.getElementById("player");
 			const crt = document.getElementById("crt");
+			const storage = document.getElementById("storage");
 
-			let index = 0;
 			player.loop = false;
-			player.addEventListener("play", () => {
+			player.addEventListener("canplay", () => {
 				overlay.classList.remove("loading");
-				whiteNoise.out({ seconds: 0.2 });
+				videoChangeStatic.out({ seconds: 0.2 });
 			});
-			const play = () => {
-				whiteNoise.in({ seconds: 0.1 });
+			const play = (index) => () => {
+				videoChangeStatic.in({ seconds: 0.1 });
 				overlay.classList.add("loading");
 				const video = videos[index];
 				player.src = video.src;
-				index = (index + 1) % videos.length;
+				player.addEventListener("ended", play((index + 1) % videos.length), {
+					once: true,
+				});
 			};
-			player.addEventListener("ended", play);
-			play();
+			play(0)();
+
+			let videoMuteTimeout;
+			const setVideoMute = (muted) => {
+				clearTimeout(videoMuteTimeout);
+				if (muted) {
+					player.muted = muted;
+				} else {
+					videoMuteTimeout = setTimeout(() => (player.muted = muted), 50);
+				}
+			};
+
+			let muted = true;
+
+			const syncPlayerMute = (hovering) => {
+				/**
+				 * this code is unbearable.
+				 * really the noise should have N mute toggles
+				 */
+				if (muted) {
+					setVideoMute(true);
+					previewStatic.out({ seconds: 0.1 });
+					videoChangeStatic.off();
+				} else if (hovering) {
+					setVideoMute(true);
+					previewStatic.in({ seconds: 0.1 });
+					videoChangeStatic.off();
+				} else {
+					setVideoMute(false);
+					previewStatic.out({ seconds: 0.1 });
+					videoChangeStatic.on();
+					// in case we were hovering while the video changed
+					player.play();
+				}
+			};
 
 			crt.addEventListener("click", () => {
-				player.muted = !player.muted;
-				player.dataset.muted = player.muted;
-				player.muted ? whiteNoise.off() : whiteNoise.on();
-				crt.title = player.muted ? "umute" : "mute";
+				muted = !muted;
+				storage.dataset.muted = muted;
+				if (muted) {
+					crt.title = "umute";
+					channelChangeStatic.off();
+					previewStatic.off();
+				} else {
+					crt.title = "mute";
+					channelChangeStatic.on();
+					previewStatic.on();
+				}
+				syncPlayerMute(document.querySelector(".previewable-link:hover"));
 			});
+			crt.addEventListener("click", () => previewStatic.on(), { once: true });
 			crt.title = "unmute";
 			crt.classList.add("clickable");
+
+			let clearStaticTimeout;
+			const changeChannel = (hovering) => () => {
+				channelChangeStatic.in({ seconds: 0.1 });
+				clearTimeout(clearStaticTimeout);
+				clearStaticTimeout = setTimeout(
+					() => channelChangeStatic.out({ seconds: 0.2 }),
+					100,
+				);
+				syncPlayerMute(hovering);
+			};
+
+			for (const element of document.getElementsByClassName(
+				"previewable-link",
+			)) {
+				element.addEventListener("mouseenter", changeChannel(true));
+				element.addEventListener("mouseleave", changeChannel(false));
+			}
 
 			const selection = colours[Math.floor(Math.random() * colours.length)];
 			const body = document.getElementById("root");
