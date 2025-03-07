@@ -1190,6 +1190,7 @@
 
 		<script>
 			// elements
+			const crt = document.getElementById("crt");
 			const description = document.getElementById("video-description");
 			const credits = document.getElementById("video-credits");
 			const overlay = document.getElementById("video-loading-static");
@@ -1291,6 +1292,8 @@
 				element.addEventListener("mouseenter", changeChannel(true));
 				element.addEventListener("mouseleave", changeChannel(false));
 			}
+
+			crt.addEventListener("click", () => player.play());
 
 			const selection = colours[Math.floor(Math.random() * colours.length)];
 			const body = document.getElementById("root");
