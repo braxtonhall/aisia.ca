@@ -914,16 +914,19 @@
 				constructor(context) {
 					super(context);
 					this.node = this.context.createGain();
+					this.node.gain.value = 0;
 					this.node.connect(this.context.destination);
 				}
 
 				on() {
 					this.node.gain.setValueAtTime(1, this.context.currentTime);
-					return this.context.resume();
+					this.context.resume();
+					return this;
 				}
 
 				off() {
 					this.node.gain.setValueAtTime(0, this.context.currentTime);
+					return this;
 				}
 			}
 
@@ -1197,7 +1200,7 @@
 
 			// audio controls
 			const context = new AudioContext();
-			const master = new Master(context);
+			const master = new Master(context).off();
 
 			const videoControl = new Fade(context)
 				.addOutput(master)
