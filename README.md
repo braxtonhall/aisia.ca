@@ -22,7 +22,7 @@ i'm not sure if it's because it's a palindrome, but to me it's a beatiful url. j
 | [L1070750.mp4](mp4/camping/L1070750.mp4)   | passage xxv                     | modern silent cinema           |
 | [L1070755.mp4](mp4/camping/L1070755.mp4)   | passage xxvii                   | modern silent cinema           |
 | [L1070759.mp4](mp4/camping/L1070759.mp4)   | passage xxviii                  | modern silent cinema           |
-| [L1070760.mp4](mp4/camping/L1070760.mp4)   | passage xxixx                   | modern silent cinema           |
+| [L1070760.mp4](mp4/camping/L1070760.mp4)   | passage xxix                    | modern silent cinema           |
 | [L1070764.mp4](mp4/camping/L1070764.mp4)   | passage xxx                     | modern silent cinema           |
 | [L1070765.mp4](mp4/camping/L1070765.mp4)   | passage xxxi                    | modern silent cinema           |
 | [L1070766.mp4](mp4/camping/L1070766.mp4)   | passage xxxii                   | modern silent cinema           |
