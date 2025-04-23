@@ -7,10 +7,6 @@ this is a handmade website, for my friend aisia
 this website came about because aisia's username on letterboxd was `aisia.ca`, and i couldn't stop staring at it.
 i'm not sure if it's because it's a palindrome, but to me it's a beatiful url. just look at it!
 
-## todo
-
-- [ ] media session integration
-
 ## song credits
 
 | video                                              | song                            | artist                         |
