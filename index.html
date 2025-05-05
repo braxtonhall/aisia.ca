@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
@@ -7,7 +8,10 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
 		<link rel="manifest" href="site.webmanifest" />
 		<meta name="description" content="eye see ya dot see ay" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+		/>
 		<!-- Open Graph -->
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://aisia.ca" />
@@ -311,12 +315,16 @@
 				height: 13px;
 			}
 
+			html,
 			body {
 				margin: 0;
-				background-color: lavender;
-				color: indigo;
 				width: 100%;
 				height: 100%;
+			}
+
+			body {
+				background-color: lavender;
+				color: indigo;
 				font-size: 16px;
 				.sub {
 					font-size: 15px;
@@ -463,8 +471,8 @@
 				background:
 					repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%)
 						50% 0/2500px 2500px,
-					repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60%
-						60%/2500px 2500px;
+					repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60% 60%/2500px
+						2500px;
 				background-blend-mode: difference;
 				animation: static 0.2s infinite steps(60) alternate;
 			}
