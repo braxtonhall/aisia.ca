@@ -41,3 +41,4 @@ i'm not sure if it's because it's a palindrome, but to me it's a beatiful url. j
 | [`camping/L1070799.mp4`](mp4/camping/L1070799.mp4) | your love                       | frankie knuckles               |
 | [`camping/L1070800.mp4`](mp4/camping/L1070800.mp4) | snowblind                       | tanya tagaq                    |
 | [`lucycanontaro.mp4`](mp4/lucycanontaro.mp4)       | lucy                            | alex g                         |
+| [`juandefuca2025`](mp4/juandefuca2025.mp4)         | the whistle song                | frankie knuckles               |
