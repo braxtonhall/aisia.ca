@@ -50,6 +50,11 @@
 					left: -1px;
 					width: calc(192px + 2px);
 					height: calc(144px + 2px);
+
+					@media screen and (min-width: 454px) {
+						width: calc(320px + 2px);
+						height: calc(240px + 2px);
+					}
 				}
 
 				& > :not(#controls) {
@@ -341,6 +346,16 @@
 
 			.crt-tall {
 				height: 144px;
+			}
+
+			@media screen and (min-width: 454px) {
+				.crt-wide {
+					width: 320px;
+				}
+
+				.crt-tall {
+					height: 240px;
+				}
 			}
 
 			.preview {
