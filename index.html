@@ -20,6 +20,18 @@
 		<meta property="og:image" content="https://aisia.ca/png/preview.png" />
 
 		<style>
+			:root {
+				--crt-width: 480px;
+				--crt-height: 360px;
+			}
+
+			@media (max-width: 540px), (max-height: 420px) {
+				:root {
+					--crt-width: 192px;
+					--crt-height: 144px;
+				}
+			}
+
 			.squircle {
 				border-radius: 6px;
 			}
@@ -48,8 +60,8 @@
 					position: absolute;
 					top: -1px;
 					left: -1px;
-					width: calc(192px + 2px);
-					height: calc(144px + 2px);
+					width: calc(var(--crt-width) + 2px);
+					height: calc(var(--crt-height) + 2px);
 				}
 
 				& > :not(#controls) {
@@ -302,21 +314,21 @@
 
 			.crt-text {
 				text-transform: uppercase;
-				margin: 13px;
+				margin: calc(var(--crt-width) * 13 / 192);
 				position: absolute;
 				color: #25c320;
 				font-weight: 900;
 				font-family: monospace;
 				display: none;
-				font-size: 13px;
+				font-size: calc(var(--crt-width) * 13 / 192);
 			}
 
 			#counter {
-				margin: 13px;
+				margin: calc(var(--crt-width) * 13 / 192);
 				position: absolute;
 				top: 0;
 				right: 0;
-				height: 13px;
+				height: calc(var(--crt-width) * 13 / 192);
 			}
 
 			html,
@@ -336,11 +348,11 @@
 			}
 
 			.crt-wide {
-				width: 192px;
+				width: var(--crt-width);
 			}
 
 			.crt-tall {
-				height: 144px;
+				height: var(--crt-height);
 			}
 
 			.preview {
@@ -665,8 +677,11 @@
 				<tr>
 					<td></td>
 					<td>
-						<p>&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*&#10032;~*</p>
-						<div id="panel" style="margin-bottom: 0.5em" class="crt-wide">
+						<div
+							id="panel"
+							style="margin-top: 0.5em; margin-bottom: 0.5em"
+							class="crt-wide"
+						>
 							<a
 								id="craftwerk-link"
 								class="previewable-link"
