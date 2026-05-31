@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 	<head>
 		<meta charset="UTF-8" />
 		<title>aisia&bull;ca</title>
@@ -192,7 +192,7 @@ a[rel~="external"]:after {
 
 .smpte {
 	position: absolute;
-	display: flex;
+	display: none;
 	flex-direction: column;
 
 	& > * {
@@ -325,6 +325,11 @@ table {
 	border-spacing: 8px 0;
 }
 
+.no-js #remote-toggle-label,
+.no-js #remote {
+	display: none !important;
+}
+
 .toggle-label {
 	position: relative;
 	.closed {
@@ -453,6 +458,9 @@ main:has(.toggle-label:hover) .video {
 }
 main:has(.previewable-link:hover) #guide {
 	display: none;
+}
+main:has(.previewable-link:hover) .smpte {
+	display: flex;
 }
 
 @keyframes in-wipe {
@@ -592,6 +600,7 @@ main:has(.previewable-link:hover) #preview-change-static {
 	font-family: 'Alte Haas Grotesk Bold', 'Courier New', monospace;
 	text-shadow: 1px 1px 0px black;
 	filter: none !important;
+	isolation: isolate;
 }
 
 @font-face {
@@ -769,7 +778,6 @@ main:has(.previewable-link:hover) #preview-change-static {
 	flex: 1;
 	display: grid;
 	grid-template-columns: 1fr 6fr;
-	border-bottom: 1px solid #0c0c5b;
 }
 
 #guide .row .channel-cell {
@@ -842,17 +850,19 @@ main:has(.previewable-link:hover) #preview-change-static {
 
 #guide .row .entry-contents {
 	left: 3px;
-	top: 2px;
+	top: 0;
 	position: absolute;
-	height: calc(100% - 4px);
+	height: 100%;
 	width: calc(100% - 6px);
+	display: flex;
+	align-items: center;
 }
 
 #guide .row .entry-contents header {
-	font-size: 8px;
-	line-height: 10px;
+	font-size: 10px;
+	line-height: 12px;
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -896,14 +906,17 @@ main:has(.previewable-link:hover) #preview-change-static {
 
 	#guide .row .entry-contents {
 		left: 1px;
-		top: 1px;
-		height: calc(100% - 2px);
+		top: 0;
+		height: 100%;
 		width: calc(100% - 3px);
+		display: flex;
+		align-items: center;
 	}
 
 	#guide .row .entry-contents header {
-		font-size: 4px;
-		line-height: 5px;
+		font-size: 6px;
+		line-height: 7px;
+		-webkit-line-clamp: 1;
 	}
 
 	#guide-upcoming {
@@ -933,6 +946,9 @@ main:has(.previewable-link:hover) #preview-change-static {
 }
 
 </style>
+		<script>
+			document.documentElement.classList.remove("no-js");
+		</script>
 	</head>
 	<body class="centered-elements" id="root">
 		<div id="storage" style="display: none" data-muted="true">
@@ -1691,8 +1707,8 @@ var FPS = 30;
 
 var TV_UNIT = 30000;
 var ON_SCREEN_COUNT = 3;
-var ROW_COUNT = 4;
-var CYCLE_DURATION = 7500;
+var ROW_COUNT = 3;
+var CYCLE_DURATION = 15000;
 var PRECISION = 5000;
 var COLUMNS = 3;
 var NEXT_UNIT_DELTA_PCT = 0.2;
@@ -1900,7 +1916,7 @@ var scheduler = function(instant, durations) {
 			? selectSchedule(env)
 			: [{
 				series: channel.title,
-				title: '',
+				title: channel.title,
 				cc: false,
 				units: env.unitCount,
 				left: 0,
@@ -2114,14 +2130,14 @@ var initGuide = function() {
 		element: timeEntering,
 		keyframes: ENTERING_KEY_FRAMES,
 		options: makeOptions,
-		timing: function(time) { return time.cycle.at; }
+		timing: function(time, d) { return (time.cycle.at + d.instance * (1/12)) % d.cycle; }
 	});
 
 	renderer.animate({
 		element: timeExiting,
 		keyframes: EXITING_KEY_FRAMES,
 		options: makeOptions,
-		timing: function(time) { return time.cycle.at; }
+		timing: function(time, d) { return (time.cycle.at + d.instance * (1/12)) % d.cycle; }
 	});
 
 	renderer.effect({
@@ -2350,6 +2366,7 @@ const overlay = document.getElementById("video-loading-static");
 let playing = null;
 let endedListener = null;
 let failsafeTimeout = null;
+let guideLoadingTimeout = null;
 
 player.loop = false;
 let pendingTargetAt = -1;
@@ -2402,6 +2419,7 @@ const playNext = () => {
 
 const tuneChannel = (channel, announce = false) => {
 	clearTimeout(failsafeTimeout);
+	clearTimeout(guideLoadingTimeout);
 	overlay.classList.add("loading");
 	if (channel.isGuide) {
 		playing = null;
@@ -2413,7 +2431,7 @@ const tuneChannel = (channel, announce = false) => {
 			endedListener = null;
 		}
 		channelChangeStatic.in({ seconds: 0.1 });
-		setTimeout(() => {
+		guideLoadingTimeout = setTimeout(() => {
 			overlay.classList.remove("loading");
 			channelChangeStatic.out({ seconds: 0.2 });
 		}, 200);
@@ -2422,6 +2440,9 @@ const tuneChannel = (channel, announce = false) => {
 		if (!window._guideInitialized) {
 			window._guideInitialized = initGuide();
 		}
+		infoDescription = "TV Guide";
+		infoCredits = "-";
+		drawInfo();
 		if (announce) showChannelOsd(channel);
 		return;
 	}
