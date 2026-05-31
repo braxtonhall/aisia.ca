@@ -122,10 +122,13 @@ var initGuide = function() {
 			timing: (time, durations) => time.cycle.at - durations.instance,
 		});
 
-		BobClubRenderer.draw(bobsClubPane, Array.from(bobsClubDateEls));
-		setInterval(function() {
-			BobClubRenderer.draw(bobsClubPane, Array.from(bobsClubDateEls));
-		}, 1000);
+		var dateStr = new Date().toLocaleDateString('en', {
+			weekday: 'long',
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+		Array.from(bobsClubDateEls).forEach(function(el) { el.innerText = dateStr; });
 	}
 
 	return { clock: clock, renderer: renderer };
