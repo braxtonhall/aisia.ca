@@ -3,7 +3,7 @@ var EXITING_KEY_FRAMES = [ { top: '0' }, { top: '-100%' } ];
 var FPS = 30;
 
 var TV_UNIT = 30000;
-var ON_SCREEN_COUNT = 4;
+var ON_SCREEN_COUNT = 3;
 var ROW_COUNT = 4;
 var CYCLE_DURATION = 15000;
 var PRECISION = 5000;

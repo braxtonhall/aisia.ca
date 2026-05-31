@@ -689,6 +689,12 @@ main:has(.previewable-link:hover) #preview-change-static {
 	overflow-y: hidden;
 }
 
+#guide {
+	.guide-time-clock, .guide-time-codes, .bobs-club-header {
+		height: calc(25% / 2);
+	}
+}
+
 #guide .guide-time-clock {
 	position: absolute;
 	top: 0;
@@ -704,12 +710,16 @@ main:has(.previewable-link:hover) #preview-change-static {
 
 #guide .guide-time-clock time {
 	grid-column: span 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	background-color: royalblue;
 	border-top: 1px solid white;
 	border-left: 1px solid white;
 	border-right: 1px solid #0c0c7a;
 	border-bottom: 1px solid #0c0c5b;
 	text-align: center;
+	height: 100%;
 }
 
 #guide .guide-time-codes {
@@ -727,6 +737,7 @@ main:has(.previewable-link:hover) #preview-change-static {
 	border-left: 1px solid white;
 	border-right: 1px solid #0c0c7a;
 	border-bottom: 1px solid #0c0c5b;
+	height: calc(25% / 2);
 }
 
 #guide .guide-time-codes > * {
@@ -829,13 +840,14 @@ main:has(.previewable-link:hover) #preview-change-static {
 #guide .bobs-club-header::before {
 	content: '';
 	display: block;
+	height: 100%;
 	border-top: 1px solid white;
 	border-left: 1px solid white;
 	border-right: 1px solid #0c0c7a;
 	border-bottom: 1px solid #0c0c5b;
 }
 
-#guide .bobs-club-header time {
+#guide .bobs-club-header time {	
 	grid-column: span 6;
 	border-top: 1px solid white;
 	border-left: 1px solid white;
@@ -845,8 +857,8 @@ main:has(.previewable-link:hover) #preview-change-static {
 	align-items: center;
 	justify-content: center;
 	color: gold;
-	font-size: 9px;
-	line-height: 14px;
+	font-size: 0; /*9px;*/
+	line-height: 0; /*14px;*/
 }
 
 #guide .row {

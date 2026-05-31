@@ -28,14 +28,14 @@ var initGuide = function() {
 		element: timeEntering,
 		keyframes: ENTERING_KEY_FRAMES,
 		options: makeOptions,
-		timing: function(time, d) { return (time.cycle.at + d.instance * (1/12)) % d.cycle; }
+		timing: function(time, d) { return (time.cycle.at + d.instance * (0.25/2)) % d.cycle; }
 	});
 
 	renderer.animate({
 		element: timeExiting,
 		keyframes: EXITING_KEY_FRAMES,
 		options: makeOptions,
-		timing: function(time, d) { return (time.cycle.at + d.instance * (1/12)) % d.cycle; }
+		timing: function(time, d) { return (time.cycle.at + d.instance * (0.25/2)) % d.cycle; }
 	});
 
 	renderer.effect({
@@ -108,7 +108,18 @@ var initGuide = function() {
 			element: bobsClubHeader,
 			keyframes: EXITING_KEY_FRAMES,
 			options: makeOptions,
-			timing: function(time) { return time.cycle.at; }
+			timing: (time, durations) =>
+				time.cycle.at - (durations.cycle - 2 * durations.instance) + durations.instance * (0.25),
+		});
+
+		renderer.animate({
+			element: [bobsClubPane, bobsClubHeader],
+			keyframes: [{ opacity: "0" }, { opacity: "0" }],
+			options: (durations) => ({
+				// * 2 because there are 2 instances where the panel is on the screen
+				duration: durations.cycle - durations.instance * 2,
+			}),
+			timing: (time, durations) => time.cycle.at - durations.instance,
 		});
 
 		BobClubRenderer.draw(bobsClubPane, Array.from(bobsClubDateEls));
