@@ -566,10 +566,10 @@ main:has(.previewable-link:hover) #preview-change-static {
 	height: 100%;
 	filter: blur(0.04rem) brightness(1.4);
 	background:
-		repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%)
-			50% 0/2500px 2500px,
-		repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60%
-			60%/2500px 2500px;
+		repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%) 50%
+			0/2500px 2500px,
+		repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60% 60%/2500px
+			2500px;
 	background-blend-mode: difference;
 	animation: static 0.2s infinite steps(60) alternate;
 }
@@ -1117,9 +1117,7 @@ class Noise extends Node {
 		if (!Noise.ready) {
 			Noise.ready = context.audioWorklet.addModule(
 				"data:text/javascript," +
-					encodeURI(
-						document.getElementById("noise-generators").innerHTML,
-					),
+					encodeURI(document.getElementById("noise-generators").innerHTML),
 			);
 		}
 		return Noise.ready;
@@ -1243,7 +1241,7 @@ const getCurrentChannel = () => CHANNELS[currentChannelIndex];
 
 const navigateChannel = (delta) => {
 	currentChannelIndex =
-		((currentChannelIndex + delta) % CHANNELS.length + CHANNELS.length) %
+		(((currentChannelIndex + delta) % CHANNELS.length) + CHANNELS.length) %
 		CHANNELS.length;
 	return CHANNELS[currentChannelIndex];
 };
@@ -1290,7 +1288,11 @@ const channelNextVideo = (channel, fromIndex, iteration) => {
 	}
 	const nextIndex = (fromIndex + 1) % videos.length;
 	const nextIteration = nextIndex === 0 ? iteration + 1 : iteration;
-	return { video: videos[nextIndex], index: nextIndex, iteration: nextIteration };
+	return {
+		video: videos[nextIndex],
+		index: nextIndex,
+		iteration: nextIteration,
+	};
 };
 
 </script>
@@ -1463,9 +1465,7 @@ const channelChangeStatic = new Fade(context)
 const previewStatic = new Fade(context)
 	.out({ seconds: 0 })
 	.addInput(
-		new Clamp(context, 0.05).addInput(
-			new Oscillator(context, "sawtooth", 60),
-		),
+		new Clamp(context, 0.05).addInput(new Oscillator(context, "sawtooth", 60)),
 		new Clamp(context, 0.03).addInput(new Noise(context, "pink")),
 	)
 	.addOutput(master);
@@ -1478,10 +1478,17 @@ let endedListener = null;
 let failsafeTimeout = null;
 
 player.loop = false;
-player.addEventListener("canplay", () => {
+let pendingLoad = false;
+
+const hideLoading = () => {
+	if (!pendingLoad) return;
+	pendingLoad = false;
 	overlay.classList.remove("loading");
 	videoChangeStatic.out({ seconds: 0.2 });
-});
+};
+
+player.addEventListener("seeked", hideLoading);
+player.addEventListener("playing", hideLoading);
 
 const setEnded = () => {
 	if (endedListener) {
@@ -1492,6 +1499,7 @@ const setEnded = () => {
 };
 
 const loadVideo = (video, at) => {
+	pendingLoad = true;
 	overlay.classList.add("loading");
 	videoChangeStatic.in({ seconds: 0.01 });
 	player.src = video.src;
@@ -1638,6 +1646,5 @@ body.style.backgroundColor = selection.background;
 body.style.color = selection.font;
 
 </script>
-
-</body>
+	</body>
 </html>
