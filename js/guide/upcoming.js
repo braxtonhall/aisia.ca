@@ -1,6 +1,10 @@
 var drawUpcoming = function(container, tvUnitStartTime, cycle, durations, channels) {
 	var seed = tvUnitStartTime + '-' + cycle;
 	var random = seededRandom(seed);
+
+	container.replaceChildren();
+	if (random() < 0.25) return;
+
 	var realChannels = channels.filter(function(c) { return !c.isGuide; });
 	if (!realChannels.length) return;
 
@@ -9,7 +13,6 @@ var drawUpcoming = function(container, tvUnitStartTime, cycle, durations, channe
 	var unitsAway = 2 + Math.floor(random() * 5);
 	var futureTime = tvUnitStartTime + durations.unit * unitsAway;
 
-	container.replaceChildren();
 	var playing;
 	try {
 		playing = channelVideosAt(channel, futureTime);

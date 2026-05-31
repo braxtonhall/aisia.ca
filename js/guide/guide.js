@@ -28,14 +28,14 @@ var initGuide = function() {
 		element: timeEntering,
 		keyframes: ENTERING_KEY_FRAMES,
 		options: makeOptions,
-		timing: function(time) { return time.cycle.at; }
+		timing: function(time, d) { return (time.cycle.at + d.instance * (1/12)) % d.cycle; }
 	});
 
 	renderer.animate({
 		element: timeExiting,
 		keyframes: EXITING_KEY_FRAMES,
 		options: makeOptions,
-		timing: function(time) { return time.cycle.at; }
+		timing: function(time, d) { return (time.cycle.at + d.instance * (1/12)) % d.cycle; }
 	});
 
 	renderer.effect({

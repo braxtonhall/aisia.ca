@@ -110,7 +110,7 @@ var scheduler = function(instant, durations) {
 			? selectSchedule(env)
 			: [{
 				series: channel.title,
-				title: '',
+				title: channel.title,
 				cc: false,
 				units: env.unitCount,
 				left: 0,
