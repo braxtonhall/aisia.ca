@@ -2,6 +2,7 @@ const overlay = document.getElementById("video-loading-static");
 let playing = null;
 let endedListener = null;
 let failsafeTimeout = null;
+let guideLoadingTimeout = null;
 
 player.loop = false;
 let pendingTargetAt = -1;
@@ -54,6 +55,7 @@ const playNext = () => {
 
 const tuneChannel = (channel, announce = false) => {
 	clearTimeout(failsafeTimeout);
+	clearTimeout(guideLoadingTimeout);
 	overlay.classList.add("loading");
 	if (channel.isGuide) {
 		playing = null;
@@ -65,7 +67,7 @@ const tuneChannel = (channel, announce = false) => {
 			endedListener = null;
 		}
 		channelChangeStatic.in({ seconds: 0.1 });
-		setTimeout(() => {
+		guideLoadingTimeout = setTimeout(() => {
 			overlay.classList.remove("loading");
 			channelChangeStatic.out({ seconds: 0.2 });
 		}, 200);
@@ -74,6 +76,9 @@ const tuneChannel = (channel, announce = false) => {
 		if (!window._guideInitialized) {
 			window._guideInitialized = initGuide();
 		}
+		infoDescription = "TV Guide";
+		infoCredits = "-";
+		drawInfo();
 		if (announce) showChannelOsd(channel);
 		return;
 	}

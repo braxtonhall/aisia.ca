@@ -573,6 +573,7 @@ main:has(.previewable-link:hover) #preview-change-static {
 	font-family: 'Alte Haas Grotesk Bold', 'Courier New', monospace;
 	text-shadow: 1px 1px 0px black;
 	filter: none !important;
+	isolation: isolate;
 }
 
 @font-face {
