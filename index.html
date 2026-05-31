@@ -1478,11 +1478,12 @@ let endedListener = null;
 let failsafeTimeout = null;
 
 player.loop = false;
-let pendingLoad = false;
+let pendingTargetAt = -1;
 
 const hideLoading = () => {
-	if (!pendingLoad) return;
-	pendingLoad = false;
+	if (pendingTargetAt < 0) return;
+	if (player.currentTime < pendingTargetAt - 0.5) return;
+	pendingTargetAt = -1;
 	overlay.classList.remove("loading");
 	videoChangeStatic.out({ seconds: 0.2 });
 };
@@ -1499,7 +1500,7 @@ const setEnded = () => {
 };
 
 const loadVideo = (video, at) => {
-	pendingLoad = true;
+	pendingTargetAt = at / 1000;
 	overlay.classList.add("loading");
 	videoChangeStatic.in({ seconds: 0.01 });
 	player.src = video.src;
