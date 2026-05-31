@@ -311,41 +311,13 @@
 				cursor: pointer;
 			}
 
-			:has(#storage[data-muted="true"]) #mute-label {
-				display: unset !important;
-			}
-
-			:has(#info-description:checked) #video-description {
-				display: unset !important;
-			}
-
-			:has(#info-credits:checked) #video-credits {
-				display: unset !important;
-			}
-
 			#player {
 				background-color: black;
 			}
 
-			#mute-label {
-				top: 0;
-				left: 0;
-			}
-
-			.video-info {
-				bottom: 0;
-				left: 0;
-			}
-
-			.crt-text {
-				text-transform: uppercase;
-				margin: calc(var(--crt-width) * 13 / 192);
-				position: absolute;
-				color: #25c320;
-				font-weight: 900;
-				font-family: monospace;
-				display: none;
-				font-size: calc(var(--crt-width) * 13 / 192);
+			#crt-text-canvas {
+				image-rendering: pixelated;
+				image-rendering: crisp-edges;
 			}
 
 			#counter {
@@ -590,16 +562,7 @@
 									muted
 									loop
 								></video>
-								<div>
-									<p id="video-description" class="crt-text video-info video">
-										juandefuca2025
-									</p>
-								</div>
-								<div>
-									<p id="video-credits" class="crt-text video-info video">
-										the whistle song - frankie knuckles
-									</p>
-								</div>
+								<canvas id="crt-text-canvas" width="320" height="240"></canvas>
 								<div id="video-loading-static" class="preview video">
 									<div class="static"></div>
 									<div class="black"></div>
@@ -622,9 +585,7 @@
 										<div class="black"></div>
 									</div>
 								</div>
-								<div>
-									<p id="mute-label" class="crt-text">MUTE</p>
-								</div>
+
 								<div>
 									<div class="black"></div>
 								</div>
@@ -1275,13 +1236,75 @@
 		<script>
 			// elements
 			const crt = document.getElementById("crt");
-			const description = document.getElementById("video-description");
-			const credits = document.getElementById("video-credits");
 			const overlay = document.getElementById("video-loading-static");
 			const player = document.getElementById("player");
 			const storage = document.getElementById("storage");
 			const muteControl = document.getElementById("mute-control");
 			const previewLinks = document.getElementsByClassName("previewable-link");
+
+			const textCanvas = document.getElementById("crt-text-canvas");
+			const textCtx = textCanvas.getContext("2d");
+			let textDescription = "";
+			let textCredits = "";
+
+			const drawCRTText = () => {
+				const cw = textCanvas.width;
+				const ch = textCanvas.height;
+				const fontSize = 22;
+				const lineHeight = 26;
+				const pad = 22;
+
+				textCtx.clearRect(0, 0, cw, ch);
+				textCtx.imageSmoothingEnabled = false;
+				textCtx.fillStyle = "#25c320";
+				textCtx.font = `900 ${fontSize}px monospace`;
+				textCtx.textBaseline = "top";
+
+				if (storage.dataset.muted === "true") {
+					textCtx.fillText("MUTE", pad, pad);
+				}
+
+				const infoDescr = document.getElementById("info-description");
+				const infoCredits = document.getElementById("info-credits");
+
+				let text = "";
+				if (infoDescr && infoDescr.checked) text = textDescription;
+				else if (infoCredits && infoCredits.checked) text = textCredits;
+				if (!text) return;
+
+				const words = text.toUpperCase().split(" ");
+				const maxWidth = cw - pad * 2;
+				const lines = [];
+				let currentLine = "";
+
+				for (const word of words) {
+					const testLine = currentLine ? currentLine + " " + word : word;
+					if (textCtx.measureText(testLine).width <= maxWidth) {
+						currentLine = testLine;
+					} else {
+						if (currentLine) lines.push(currentLine);
+						currentLine = word;
+					}
+				}
+				if (currentLine) lines.push(currentLine);
+
+				const totalHeight = lines.length * lineHeight;
+				const startY = ch - totalHeight - pad;
+
+				for (let i = 0; i < lines.length; i++) {
+					textCtx.fillText(lines[i], pad, startY + i * lineHeight);
+				}
+			};
+
+			drawCRTText();
+
+			const observer = new MutationObserver(() => drawCRTText());
+			observer.observe(storage, { attributes: true, attributeFilter: ["data-muted"] });
+
+			for (const id of ["info-off", "info-description", "info-credits"]) {
+				const radio = document.getElementById(id);
+				if (radio) radio.addEventListener("change", drawCRTText);
+			}
 
 			// audio controls
 			const context = new AudioContext();
@@ -1328,8 +1351,9 @@
 				videoChangeStatic.in({ seconds: 0.01 });
 				const video = videos[index];
 				player.src = video.src;
-				description.innerText = video.description;
-				credits.innerText = video.credits;
+				textDescription = video.description;
+				textCredits = video.credits;
+				drawCRTText();
 				player.addEventListener("ended", play((index + 1) % videos.length), {
 					once: true,
 				});
