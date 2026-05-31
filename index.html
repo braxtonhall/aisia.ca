@@ -87,6 +87,31 @@
 										<div style="background-color: #1e1e1e; flex: 3"></div>
 									</div>
 								</div>
+								<div id="guide" style="display: none">
+									<div class="guide-channel-banner">
+										<div id="guide-left-banner"></div>
+										<div id="guide-right-banner">
+											<div id="guide-upcoming"></div>
+										</div>
+									</div>
+									<div class="listings-container">
+										<div class="guide-time-codes off-to-on">
+											<div class="now"></div>
+											<div class="after"></div>
+											<div class="later"></div>
+										</div>
+										<div class="guide-time-codes on-to-off">
+											<div class="now"></div>
+											<div class="after"></div>
+											<div class="later"></div>
+										</div>
+										<div class="guide-time-clock">
+											<time class="guide-clock"></time>
+										</div>
+										<div class="guide-instance off-to-on"></div>
+										<div class="guide-instance on-to-off"></div>
+									</div>
+								</div>
 								<video
 									disablepictureinpicture
 									playsinline
@@ -400,6 +425,14 @@
 		<script src="js/data.js"></script>
 		<script src="js/time.js"></script>
 		<script src="js/channel.js"></script>
+		<script src="js/guide/constants.js"></script>
+		<script src="js/guide/clock.js"></script>
+		<script src="js/guide/renderer.js"></script>
+		<script src="js/guide/schedule.js"></script>
+		<script src="js/guide/instance.js"></script>
+		<script src="js/guide/time-codes.js"></script>
+		<script src="js/guide/upcoming.js"></script>
+		<script src="js/guide/guide.js"></script>
 		<script src="js/canvas.js"></script>
 		<script src="js/audio.js"></script>
 		<script src="js/video.js"></script>

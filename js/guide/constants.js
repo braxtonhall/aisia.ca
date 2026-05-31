@@ -1,0 +1,14 @@
+var ENTERING_KEY_FRAMES = [ { top: '100%' }, { top: '0' } ];
+var EXITING_KEY_FRAMES = [ { top: '0' }, { top: '-100%' } ];
+var FPS = 30;
+
+var TV_UNIT = 30000;
+var ON_SCREEN_COUNT = 3;
+var ROW_COUNT = 4;
+var CYCLE_DURATION = 7500;
+var PRECISION = 5000;
+var COLUMNS = 3;
+var NEXT_UNIT_DELTA_PCT = 0.2;
+
+var INSTANCE_COUNT = Math.ceil(ROW_COUNT / ON_SCREEN_COUNT) + 1;
+var INSTANCE_DURATION = CYCLE_DURATION / INSTANCE_COUNT;

@@ -54,6 +54,34 @@ const playNext = () => {
 
 const tuneChannel = (channel, announce = false) => {
 	clearTimeout(failsafeTimeout);
+	overlay.classList.add("loading");
+	if (channel.isGuide) {
+		playing = null;
+		player.pause();
+		player.removeAttribute('src');
+		player.style.display = 'none';
+		if (endedListener) {
+			player.removeEventListener('ended', endedListener);
+			endedListener = null;
+		}
+		channelChangeStatic.in({ seconds: 0.1 });
+		setTimeout(() => {
+			overlay.classList.remove("loading");
+			channelChangeStatic.out({ seconds: 0.2 });
+		}, 200);
+		var guide = document.getElementById('guide');
+		if (guide) guide.style.display = '';
+		if (!window._guideInitialized) {
+			window._guideInitialized = initGuide();
+		}
+		if (announce) showChannelOsd(channel);
+		return;
+	}
+
+	var guide = document.getElementById('guide');
+	if (guide) guide.style.display = 'none';
+	player.style.display = '';
+
 	channelChangeStatic.in({ seconds: 0.1 });
 	setTimeout(() => {
 		const now = getTime();

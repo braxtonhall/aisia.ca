@@ -38,7 +38,18 @@ const CHANNELS = [
 ];
 // __CHANNELS_END__
 
-let currentChannelIndex = 0;
+if (!CHANNELS.find(function (c) { return c.isGuide; })) {
+	CHANNELS.unshift({
+		id: 1,
+		code: 'TVG',
+		title: 'TV Guide',
+		isGuide: true,
+		randomise: false,
+		videos: [],
+	});
+}
+
+let currentChannelIndex = 1;
 
 const getCurrentChannel = () => CHANNELS[currentChannelIndex];
 

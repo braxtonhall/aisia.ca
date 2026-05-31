@@ -68,7 +68,7 @@ const changeChannel = (hovering) => () => {
 	} else {
 		videoControl.in({ seconds: 0.2 });
 		previewStatic.out({ seconds: 0.1 });
-		player.play();
+		if (playing) player.play();
 	}
 };
 
