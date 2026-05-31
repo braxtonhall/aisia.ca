@@ -12,14 +12,32 @@ const CHANNELS = [
 		randomise: false,
 		videos: [
 			{
-				src: "mp4/juandefuca2025.mp4",
-				description: "juandefuca2025",
-				credits: "the whistle song - frankie knuckles",
+				src: "mp4/tokyo2k26.mp4",
+				description: "tokyo2k26",
+				credits: "lee's greenhouse - dana and alden",
 			},
 		],
 	},
 	{
 		id: 3,
+		code: "BFR",
+		title: "Before",
+		randomise: false,
+		videos: [
+			{
+				src: "mp4/juandefuca2025.mp4",
+				description: "juandefuca2025",
+				credits: "the whistle song - frankie knuckles",
+			},
+			{
+				src: "mp4/lucycanontaro.mp4",
+				description: "lucycanontaro - 2020",
+				credits: "lucy - alex g",
+			},
+		],
+	},
+	{
+		id: 4,
 		code: "CMP",
 		title: "Camping",
 		randomise: true,
@@ -168,19 +186,6 @@ const CHANNELS = [
 				src: "mp4/camping/L1070800.mp4",
 				description: "L1070800",
 				credits: "snowblind - tanya tagaq",
-			},
-		],
-	},
-	{
-		id: 4,
-		code: "BFR",
-		title: "Before",
-		randomise: false,
-		videos: [
-			{
-				src: "mp4/lucycanontaro.mp4",
-				description: "lucycanontaro - 2020",
-				credits: "lucy - alex g",
 			},
 		],
 	},
