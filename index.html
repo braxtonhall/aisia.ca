@@ -215,21 +215,20 @@
 				height: 48px !important;
 			}
 
-			:has(#vertical-bobs-club-toggle:checked) #bobs-club {
+			:has(#remote-toggle:checked) #remote {
 				width: 96px !important;
 			}
 
-			#bobs-club-main {
-				width: 96px;
-			}
-
-			.side-panel {
+			#remote {
 				transition: width 0.5s;
 				width: 0;
 				overflow: hidden;
+				display: flex;
 			}
 
-			.side-panel-contents {
+			#remote-contents {
+				width: 96px;
+				flex: 1;
 				background-color: darkblue;
 				display: flex;
 				flex-direction: column;
@@ -237,7 +236,26 @@
 				padding: 6px;
 				> * {
 					flex: 1;
+					min-height: 0;
 				}
+			}
+
+			.remote-btn {
+				margin: 2px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border: none;
+				padding: 0;
+				background: none;
+				cursor: pointer;
+				overflow: hidden;
+			}
+
+			.remote-svg {
+				width: 100%;
+				height: 100%;
+				pointer-events: none;
 			}
 
 			.bobs-club-link {
@@ -661,40 +679,43 @@
 						</div>
 					</td>
 					<td>
-						<div id="bobs-club" class="crt-tall squircle side-panel">
-							<div
-								id="bobs-club-main"
-								class="squircle crt-tall side-panel-contents"
-							>
-								<a
-									class="bobs-club-link squircle"
-									href="https://bobs-club.net/site/aisiadotca/pred"
-									rel="external"
-									title="previous website"
-									>👆</a
-								>
-								<a
-									class="bobs-club-link squircle"
-									href="https://bobs-club.net/"
-									rel="external"
-									title="bob's club web ring"
-								>
-									<span>bob's club</span>
-								</a>
-								<a
-									class="bobs-club-link squircle"
-									href="https://bobs-club.net/site/aisiadotca/random"
-									rel="external"
-									title="random website"
-									>🎲</a
-								>
-								<a
-									class="bobs-club-link squircle"
-									href="https://bobs-club.net/site/aisiadotca/succ"
-									rel="external"
-									title="next website"
-									>👇</a
-								>
+						<div id="remote" class="crt-tall squircle">
+							<div id="remote-contents" class="squircle crt-tall">
+								<button class="remote-btn squircle" id="ch-up" title="channel up">
+									<svg viewBox="0 0 100 100" class="remote-svg">
+										<rect x="0" y="0" width="100" height="100" rx="16" ry="16" fill="#9370db"/>
+										<polygon points="50,26 22,68 78,68" fill="white"/>
+									</svg>
+								</button>
+								<button class="remote-btn squircle" id="ch-down" title="channel down">
+									<svg viewBox="0 0 100 100" class="remote-svg">
+										<rect x="0" y="0" width="100" height="100" rx="16" ry="16" fill="#9370db"/>
+										<polygon points="50,74 22,32 78,32" fill="white"/>
+									</svg>
+								</button>
+								<button class="remote-btn squircle" id="remote-mute" title="mute">
+									<svg viewBox="0 0 100 100" class="remote-svg">
+										<rect x="0" y="0" width="100" height="100" rx="16" ry="16" fill="#cd5c5c"/>
+										<polygon points="22,40 38,40 54,28 54,72 38,60 22,60" fill="white"/>
+										<line x1="62" y1="32" x2="78" y2="68" stroke="white" stroke-width="6" stroke-linecap="round"/>
+										<line x1="78" y1="32" x2="62" y2="68" stroke="white" stroke-width="6" stroke-linecap="round"/>
+									</svg>
+								</button>
+								<button class="remote-btn squircle" id="remote-info" title="info">
+									<svg viewBox="0 0 100 100" class="remote-svg">
+										<rect x="0" y="0" width="100" height="100" rx="16" ry="16" fill="#4169e1"/>
+										<circle cx="50" cy="50" r="30" fill="none" stroke="white" stroke-width="5"/>
+										<line x1="50" y1="45" x2="50" y2="65" stroke="white" stroke-width="5" stroke-linecap="round"/>
+										<circle cx="50" cy="33" r="4.5" fill="white"/>
+									</svg>
+								</button>
+								<button class="remote-btn squircle" id="remote-av" title="a/v">
+									<svg viewBox="0 0 100 100" class="remote-svg">
+										<rect x="0" y="0" width="100" height="100" rx="16" ry="16" fill="#daa520"/>
+										<rect x="12" y="20" width="76" height="60" rx="14" ry="14" fill="none" stroke="white" stroke-width="5"/>
+										<text x="50" y="54" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',monospace" font-size="16" font-weight="bold" fill="white">A/V</text>
+									</svg>
+								</button>
 							</div>
 						</div>
 					</td>
@@ -754,16 +775,16 @@
 								/>
 							</label>
 							<label
-								id="vertical-bobs-club-toggle-label"
-								for="vertical-bobs-club-toggle"
+								id="remote-toggle-label"
+								for="remote-toggle"
 								style="float: right"
 								class="clickable previewable-link toggle-label"
-								title="bob's club sidebar"
+								title="remote control"
 							>
-								<span class="closed">🕹️</span>
-								<span class="open">🎮</span>
+								<span class="closed">📺</span>
+								<span class="open">📡</span>
 								<input
-									id="vertical-bobs-club-toggle"
+									id="remote-toggle"
 									type="checkbox"
 									style="position: absolute; left: 0; opacity: 0"
 									class="clickable toggle"
@@ -1323,21 +1344,31 @@
 				overlay.classList.remove("loading");
 				videoChangeStatic.out({ seconds: 0.2 });
 			});
+			let currentVideoIndex = 0;
 			const play = (index) => () => {
+				currentVideoIndex = ((index % videos.length) + videos.length) % videos.length;
 				overlay.classList.add("loading");
 				videoChangeStatic.in({ seconds: 0.01 });
-				const video = videos[index];
+				const video = videos[currentVideoIndex];
 				player.src = video.src;
 				description.innerText = video.description;
 				credits.innerText = video.credits;
-				player.addEventListener("ended", play((index + 1) % videos.length), {
+				player.addEventListener("ended", play(currentVideoIndex + 1), {
 					once: true,
 				});
 			};
 			play(0)();
 
+			const changeVideo = (delta) => {
+				channelChangeStatic.in({ seconds: 0.1 });
+				setTimeout(() => {
+					channelChangeStatic.out({ seconds: 0.2 });
+					play(currentVideoIndex + delta)();
+				}, 100);
+			};
+
 			let muted = true;
-			muteControl.addEventListener("click", () => {
+			const toggleMute = () => {
 				muted = !muted;
 				storage.dataset.muted = muted;
 				if (muted) {
@@ -1348,9 +1379,32 @@
 					master.on();
 					player.muted = false;
 				}
-			});
+			};
+			muteControl.addEventListener("click", toggleMute);
 			muteControl.title = "unmute";
 			muteControl.classList.add("clickable");
+
+			document.getElementById("remote-mute").addEventListener("click", toggleMute);
+			document.getElementById("ch-up").addEventListener("click", () => changeVideo(1));
+			document.getElementById("ch-down").addEventListener("click", () => changeVideo(-1));
+
+			document.getElementById("remote-info").addEventListener("click", () => {
+				const infoOff = document.getElementById("info-off");
+				const infoDescription = document.getElementById("info-description");
+				const infoCredits = document.getElementById("info-credits");
+				if (infoOff.checked) {
+					infoDescription.checked = true;
+				} else if (infoDescription.checked) {
+					infoCredits.checked = true;
+				} else {
+					infoOff.checked = true;
+				}
+			});
+
+			document.getElementById("remote-av").addEventListener("click", () => {
+				const randomIndex = Math.floor(Math.random() * videos.length);
+				play(randomIndex !== currentVideoIndex ? randomIndex : (randomIndex + 1) % videos.length)();
+			});
 
 			let clearStaticTimeout;
 			const changeChannel = (hovering) => () => {
