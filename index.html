@@ -55,6 +55,18 @@
 					}
 				}
 
+				&.wipe .black {
+					animation: in-wipe 128ms linear 0s 1;
+				}
+
+				&.filter-off {
+					filter: none;
+				}
+
+				&.filter-off > * {
+					filter: none;
+				}
+
 				& > * {
 					filter: blur(0.04rem) brightness(1.1);
 					position: absolute;
@@ -149,6 +161,11 @@
 				);
 				background-size: 100% 4px;
 				animation: scanlines 1s steps(60) infinite;
+			}
+
+			#crt.filter-off:before,
+			#crt.filter-off:after {
+				display: none;
 			}
 
 			@keyframes unique-scanline {
@@ -333,17 +350,33 @@
 				background-color: black;
 			}
 
-			#crt-text-canvas {
+			#crt-mute-canvas,
+			#crt-info-canvas,
+			#crt-corner-canvas {
 				image-rendering: pixelated;
 				image-rendering: crisp-edges;
 			}
 
-			#counter {
-				margin: calc(var(--crt-width) * 13 / 192);
-				position: absolute;
-				top: 0;
-				right: 0;
-				height: calc(var(--crt-width) * 13 / 192);
+			#crt-mute-canvas,
+			#crt-info-canvas {
+				display: none;
+			}
+
+			:has(#storage[data-muted="true"]) #crt-mute-canvas,
+			:has(#info-description:checked, #info-credits:checked) #crt-info-canvas {
+				display: unset !important;
+			}
+
+			#crt-corner-canvas {
+				visibility: hidden;
+			}
+
+			main:has(.previewable-link:hover) #crt-corner-canvas {
+				visibility: visible;
+			}
+
+			main:has(.previewable-link:hover) #crt #crt-info-canvas {
+				display: none !important;
 			}
 
 			html,
@@ -530,7 +563,7 @@
 					<td></td>
 					<td>
 						<div style="display: flex">
-							<div id="crt" class="squircle crt-tall crt-wide" title="aisia tv">
+							<div id="crt" class="squircle crt-tall crt-wide filter-off" title="aisia tv">
 								<div class="smpte">
 									<div class="smpte-top">
 										<div style="background-color: #c0c0c0"></div>
@@ -563,13 +596,6 @@
 										<div style="background-color: #1e1e1e; flex: 3"></div>
 									</div>
 								</div>
-								<div>
-									<img
-										id="counter"
-										src="https://bobs-server.net/counters/cm7n4e4cc0006ovm8ew2xe1w2/actions/cm7n4ecsm0007ovm8lrh91n0a"
-										alt="page counter"
-									/>
-								</div>
 								<video
 									disablepictureinpicture
 									playsinline
@@ -580,7 +606,9 @@
 									muted
 									loop
 								></video>
-								<canvas id="crt-text-canvas" width="320" height="240"></canvas>
+								<canvas id="crt-mute-canvas"></canvas>
+								<canvas id="crt-info-canvas"></canvas>
+								<canvas id="crt-corner-canvas"></canvas>
 								<div id="video-loading-static" class="preview video">
 									<div class="static"></div>
 									<div class="black"></div>
@@ -1263,44 +1291,79 @@
 			const muteControl = document.getElementById("mute-control");
 			const previewLinks = document.getElementsByClassName("previewable-link");
 
-			const textCanvas = document.getElementById("crt-text-canvas");
-			const textCtx = textCanvas.getContext("2d");
-			let textDescription = "";
-			let textCredits = "";
+			const muteCanvas = document.getElementById("crt-mute-canvas");
+			const infoCanvas = document.getElementById("crt-info-canvas");
+			const cornerCanvas = document.getElementById("crt-corner-canvas");
+			const muteCtx = muteCanvas.getContext("2d");
+			const infoCtx = infoCanvas.getContext("2d");
+			const cornerCtx = cornerCanvas.getContext("2d");
+			let infoDescription = "";
+			let infoCredits = "";
+			const counterUrl = "https://bobs-server.net/counters/cm7n4e4cc0006ovm8ew2xe1w2/actions/cm7n4ecsm0007ovm8lrh91n0a";
+			const counterImage = new Image();
+			counterImage.src = counterUrl;
 
-			const drawCRTText = () => {
-				const cw = textCanvas.width;
-				const ch = textCanvas.height;
-				const fontSize = 22;
-				const lineHeight = 26;
-				const pad = 22;
+			const setCanvasSizes = () => {
+				const style = getComputedStyle(document.documentElement);
+				const w = parseInt(style.getPropertyValue("--crt-width"));
+				const h = parseInt(style.getPropertyValue("--crt-height"));
+				muteCanvas.width = w;
+				muteCanvas.height = h;
+				infoCanvas.width = w;
+				infoCanvas.height = h;
+				cornerCanvas.width = w;
+				cornerCanvas.height = h;
+			};
 
-				textCtx.clearRect(0, 0, cw, ch);
-				textCtx.imageSmoothingEnabled = false;
-				textCtx.fillStyle = "#25c320";
-				textCtx.font = `900 ${fontSize}px monospace`;
-				textCtx.textBaseline = "top";
+			const crtBreakpoint = window.matchMedia("(max-width: 540px), (max-height: 420px)");
+			crtBreakpoint.addEventListener("change", () => {
+				setCanvasSizes();
+				drawMute();
+				drawInfo();
+				drawCounter();
+			});
 
-				if (storage.dataset.muted === "true") {
-					textCtx.fillText("MUTE", pad, pad);
-				}
+			const textStyle = (ctx) => {
+				ctx.imageSmoothingEnabled = false;
+				ctx.fillStyle = "#25c320";
+			};
 
+			const drawMute = () => {
+				const cw = muteCanvas.width;
+				const ch = muteCanvas.height;
+				const fontSize = Math.round(cw * 13 / 192);
+				const pad = fontSize;
+				muteCtx.clearRect(0, 0, cw, ch);
+				if (storage.dataset.muted !== "true") return;
+				textStyle(muteCtx);
+				muteCtx.font = `900 ${fontSize}px monospace`;
+				muteCtx.textBaseline = "top";
+				muteCtx.fillText("MUTE", pad, pad);
+			};
+
+			const drawInfo = () => {
+				const cw = infoCanvas.width;
+				const ch = infoCanvas.height;
+				const fontSize = Math.round(cw * 13 / 192);
+				const lineHeight = Math.round(fontSize * 26 / 22);
+				const pad = fontSize;
+				infoCtx.clearRect(0, 0, cw, ch);
 				const infoDescr = document.getElementById("info-description");
-				const infoCredits = document.getElementById("info-credits");
-
+				const infoCreditsEl = document.getElementById("info-credits");
 				let text = "";
-				if (infoDescr && infoDescr.checked) text = textDescription;
-				else if (infoCredits && infoCredits.checked) text = textCredits;
+				if (infoDescr && infoDescr.checked) text = infoDescription;
+				else if (infoCreditsEl && infoCreditsEl.checked) text = infoCredits;
 				if (!text) return;
-
+				textStyle(infoCtx);
+				infoCtx.font = `900 ${fontSize}px monospace`;
+				infoCtx.textBaseline = "top";
 				const words = text.toUpperCase().split(" ");
 				const maxWidth = cw - pad * 2;
 				const lines = [];
 				let currentLine = "";
-
 				for (const word of words) {
 					const testLine = currentLine ? currentLine + " " + word : word;
-					if (textCtx.measureText(testLine).width <= maxWidth) {
+					if (infoCtx.measureText(testLine).width <= maxWidth) {
 						currentLine = testLine;
 					} else {
 						if (currentLine) lines.push(currentLine);
@@ -1308,23 +1371,40 @@
 					}
 				}
 				if (currentLine) lines.push(currentLine);
-
 				const totalHeight = lines.length * lineHeight;
 				const startY = ch - totalHeight - pad;
-
 				for (let i = 0; i < lines.length; i++) {
-					textCtx.fillText(lines[i], pad, startY + i * lineHeight);
+					infoCtx.fillText(lines[i], pad, startY + i * lineHeight);
 				}
 			};
 
-			drawCRTText();
+			const drawCounter = () => {
+				const cw = cornerCanvas.width;
+				const ratio = cw / 192;
+				const margin = Math.round(11 * ratio);
+				const imgHeight = margin;
+				if (!counterImage.naturalWidth) return;
+				const aspect = counterImage.naturalWidth / counterImage.naturalHeight;
+				const imgWidth = Math.round(imgHeight * aspect);
+				const x = cw - margin - imgWidth;
+				const y = margin;
+				cornerCtx.clearRect(0, 0, cw, cornerCanvas.height);
+				cornerCtx.imageSmoothingEnabled = false;
+				cornerCtx.drawImage(counterImage, x, y, imgWidth, imgHeight);
+			};
 
-			const observer = new MutationObserver(() => drawCRTText());
+			setCanvasSizes();
+			drawMute();
+			drawInfo();
+			counterImage.addEventListener("load", drawCounter);
+			if (counterImage.complete) drawCounter();
+
+			const observer = new MutationObserver(() => drawMute());
 			observer.observe(storage, { attributes: true, attributeFilter: ["data-muted"] });
 
 			for (const id of ["info-off", "info-description", "info-credits"]) {
 				const radio = document.getElementById(id);
-				if (radio) radio.addEventListener("change", drawCRTText);
+				if (radio) radio.addEventListener("change", drawInfo);
 			}
 
 			// audio controls
@@ -1374,9 +1454,9 @@
 				videoChangeStatic.in({ seconds: 0.01 });
 				const video = videos[currentVideoIndex];
 				player.src = video.src;
-			textDescription = video.description;
-			textCredits = video.credits;
-			drawCRTText();
+				infoDescription = video.description;
+				infoCredits = video.credits;
+				drawInfo();
 			player.addEventListener("ended", play((index + 1) % videos.length), {
 					once: true,
 				});
@@ -1416,18 +1496,23 @@
 				const infoOff = document.getElementById("info-off");
 				const infoDescription = document.getElementById("info-description");
 				const infoCredits = document.getElementById("info-credits");
+				let next;
 				if (infoOff.checked) {
-					infoDescription.checked = true;
+					next = infoDescription;
 				} else if (infoDescription.checked) {
-					infoCredits.checked = true;
+					next = infoCredits;
 				} else {
-					infoOff.checked = true;
+					next = infoOff;
 				}
+				next.checked = true;
+				next.dispatchEvent(new Event("change"));
+				drawInfo();
 			});
 
 			document.getElementById("remote-av").addEventListener("click", () => {
-				const randomIndex = Math.floor(Math.random() * videos.length);
-				play(randomIndex !== currentVideoIndex ? randomIndex : (randomIndex + 1) % videos.length)();
+				crt.classList.toggle("filter-off");
+				crt.classList.add("wipe");
+				setTimeout(() => crt.classList.remove("wipe"), 128);
 			});
 
 			let clearStaticTimeout;
