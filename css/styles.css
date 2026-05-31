@@ -648,6 +648,7 @@ main:has(.previewable-link:hover) #preview-change-static {
 	margin-right: auto;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
+	line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -938,6 +939,7 @@ main:has(.previewable-link:hover) #preview-change-static {
 	line-height: 12px;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
+	line-clamp: 1;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -992,6 +994,7 @@ main:has(.previewable-link:hover) #preview-change-static {
 		font-size: 6px;
 		line-height: 7px;
 		-webkit-line-clamp: 1;
+		line-clamp: 1;
 	}
 
 	#guide-upcoming {
@@ -1036,6 +1039,5 @@ main:has(.previewable-link:hover) #preview-change-static {
 
 	#bobs-club-pane .bobs-club {
 		gap: 2%;
-	}
 	}
 }
