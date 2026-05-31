@@ -170,7 +170,7 @@ a[rel~="external"]:after {
 
 .smpte {
 	position: absolute;
-	display: flex;
+	display: none;
 	flex-direction: column;
 
 	& > * {
@@ -431,6 +431,9 @@ main:has(.toggle-label:hover) .video {
 }
 main:has(.previewable-link:hover) #guide {
 	display: none;
+}
+main:has(.previewable-link:hover) .smpte {
+	display: flex;
 }
 
 @keyframes in-wipe {
