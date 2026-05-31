@@ -2,9 +2,11 @@ const storage = document.getElementById("storage");
 const muteCanvas = document.getElementById("crt-mute-canvas");
 const infoCanvas = document.getElementById("crt-info-canvas");
 const cornerCanvas = document.getElementById("crt-corner-canvas");
+const osdCanvas = document.getElementById("crt-osd-canvas");
 const muteCtx = muteCanvas.getContext("2d");
 const infoCtx = infoCanvas.getContext("2d");
 const cornerCtx = cornerCanvas.getContext("2d");
+const osdCtx = osdCanvas.getContext("2d");
 let infoDescription = "";
 let infoCredits = "";
 const counterUrl =
@@ -22,6 +24,8 @@ const setCanvasSizes = () => {
 	infoCanvas.height = h;
 	cornerCanvas.width = w;
 	cornerCanvas.height = h;
+	osdCanvas.width = w;
+	osdCanvas.height = h;
 };
 
 const crtBreakpoint = window.matchMedia(
@@ -120,3 +124,20 @@ for (const id of ["info-off", "info-description", "info-credits"]) {
 	const radio = document.getElementById(id);
 	if (radio) radio.addEventListener("change", drawInfo);
 }
+
+const drawChannelOsd = (channel) => {
+	const cw = osdCanvas.width;
+	const ch = osdCanvas.height;
+	osdCtx.clearRect(0, 0, cw, ch);
+	if (!channel) return;
+	const fontSize = Math.round((cw * 13) / 192);
+	const lineHeight = Math.round((fontSize * 26) / 22);
+	const pad = fontSize;
+	textStyle(osdCtx);
+	osdCtx.font = `900 ${fontSize}px monospace`;
+	osdCtx.textBaseline = "top";
+	osdCtx.textAlign = "right";
+	const number = String(channel.id + 1).padStart(2, "0");
+	osdCtx.fillText(number, cw - pad, pad);
+	osdCtx.fillText(channel.code, cw - pad, pad + lineHeight);
+};

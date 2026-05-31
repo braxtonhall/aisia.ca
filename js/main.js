@@ -1,4 +1,3 @@
-// elements
 const crt = document.getElementById("crt");
 const muteControl = document.getElementById("mute-control");
 const previewLinks = document.getElementsByClassName("previewable-link");
@@ -20,15 +19,17 @@ muteControl.addEventListener("click", toggleMute);
 muteControl.title = "unmute";
 muteControl.classList.add("clickable");
 
-document
-	.getElementById("remote-mute")
-	.addEventListener("click", toggleMute);
-document
-	.getElementById("ch-up")
-	.addEventListener("click", () => changeVideo(1));
-document
-	.getElementById("ch-down")
-	.addEventListener("click", () => changeVideo(-1));
+document.getElementById("remote-mute").addEventListener("click", toggleMute);
+
+document.getElementById("ch-up").addEventListener("click", () => {
+	const channel = navigateChannel(1);
+	tuneChannel(channel, true);
+});
+
+document.getElementById("ch-down").addEventListener("click", () => {
+	const channel = navigateChannel(-1);
+	tuneChannel(channel, true);
+});
 
 document.getElementById("remote-info").addEventListener("click", () => {
 	const infoOff = document.getElementById("info-off");

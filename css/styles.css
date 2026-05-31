@@ -359,6 +359,7 @@ table {
 	background-color: black;
 }
 
+#crt-osd-canvas,
 #crt-mute-canvas,
 #crt-info-canvas,
 #crt-corner-canvas {
@@ -384,7 +385,8 @@ main:has(.previewable-link:hover) #crt-corner-canvas {
 	visibility: visible;
 }
 
-main:has(.previewable-link:hover) #crt #crt-info-canvas {
+main:has(.previewable-link:hover) #crt #crt-info-canvas,
+main:has(.previewable-link:hover) #crt #crt-osd-canvas {
 	display: none !important;
 }
 

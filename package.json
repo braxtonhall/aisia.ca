@@ -2,7 +2,8 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"generate-channels": "node scripts/generate-channels.mjs",
 		"build": "node build.mjs",
-		"watch": "node --watch --watch-path=./js --watch-path=./css --watch-path=./index.html --watch-path=./static build.mjs"
+		"watch": "node --watch --watch-path=./js --watch-path=./css --watch-path=./index.html --watch-path=./static --watch-path=./channels.json build.mjs"
 	}
 }

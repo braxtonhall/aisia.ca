@@ -1,9 +1,7 @@
 const overlay = document.getElementById("video-loading-static");
-
-for (let i = videos.length - 1; i > 0; i--) {
-	const j = Math.floor(Math.random() * (i + 1));
-	[videos[i], videos[j]] = [videos[j], videos[i]];
-}
+let playing = null;
+let endedListener = null;
+let failsafeTimeout = null;
 
 player.loop = false;
 player.addEventListener("canplay", () => {
@@ -11,27 +9,52 @@ player.addEventListener("canplay", () => {
 	videoChangeStatic.out({ seconds: 0.2 });
 });
 
-let currentVideoIndex = 0;
-const play = (index) => () => {
-	currentVideoIndex =
-		((index % videos.length) + videos.length) % videos.length;
+const setEnded = () => {
+	if (endedListener) {
+		player.removeEventListener("ended", endedListener);
+	}
+	endedListener = playNext;
+	player.addEventListener("ended", playNext, { once: true });
+};
+
+const loadVideo = (video, at) => {
 	overlay.classList.add("loading");
 	videoChangeStatic.in({ seconds: 0.01 });
-	const video = videos[currentVideoIndex];
 	player.src = video.src;
+	player.currentTime = at / 1000;
 	infoDescription = video.description;
 	infoCredits = video.credits;
 	drawInfo();
-	player.addEventListener("ended", play((index + 1) % videos.length), {
-		once: true,
-	});
-};
-play(0)();
 
-const changeVideo = (delta) => {
+	clearTimeout(failsafeTimeout);
+	failsafeTimeout = setTimeout(playNext, video.ms - at + 200);
+};
+
+const playNext = () => {
+	clearTimeout(failsafeTimeout);
+	if (!playing) return;
+	const next = channelNextVideo(
+		getCurrentChannel(),
+		playing.index,
+		playing.iteration,
+	);
+	playing = next;
+	loadVideo(next.video, 0);
+	setEnded();
+};
+
+const tuneChannel = (channel, announce = false) => {
+	clearTimeout(failsafeTimeout);
 	channelChangeStatic.in({ seconds: 0.1 });
 	setTimeout(() => {
+		const now = getTime();
+		playing = channelVideosAt(channel, now);
 		channelChangeStatic.out({ seconds: 0.2 });
-		play(currentVideoIndex + delta)();
+		loadVideo(playing.video, playing.at);
+		setEnded();
+		if (announce) showChannelOsd(channel);
 	}, 100);
 };
+
+// Start with LAT channel dropped into the middle of the broadcast
+tuneChannel(getCurrentChannel());

@@ -22,6 +22,12 @@ async function copyDir(src, dest) {
 async function build() {
 	await mkdir(DIST, { recursive: true });
 
+	const channelsPath = join(ROOT, "channels.json");
+	let channels = null;
+	if (existsSync(channelsPath)) {
+		channels = JSON.parse(await readFile(channelsPath, "utf-8"));
+	}
+
 	let html = await readFile(join(ROOT, "index.html"), "utf-8");
 
 	// Inline CSS
@@ -37,7 +43,13 @@ async function build() {
 	html = html.replace(
 		/<script\s+src="([^"]*)"\s*>\s*<\/script>/g,
 		(match, src) => {
-			const js = readFileSync(join(ROOT, src), "utf-8");
+			let js = readFileSync(join(ROOT, src), "utf-8");
+			if (src === "js/channel.js" && channels) {
+				js = js.replace(
+					/\/\/ __CHANNELS_START__[\s\S]*\/\/ __CHANNELS_END__/,
+					`// __CHANNELS_START__\nconst CHANNELS = ${JSON.stringify(channels)};\n// __CHANNELS_END__`,
+				);
+			}
 			return `<script>\n${js}\n</script>`;
 		},
 	);
@@ -48,8 +60,6 @@ async function build() {
 	if (existsSync(STATIC)) {
 		await copyDir(STATIC, DIST);
 	}
-
-	console.log("Build complete: dist/index.html");
 }
 
 build().catch((err) => {
