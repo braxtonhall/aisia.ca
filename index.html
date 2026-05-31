@@ -387,6 +387,7 @@ table {
 #crt-corner-canvas {
 	image-rendering: pixelated;
 	image-rendering: crisp-edges;
+	z-index: 20;
 }
 
 #crt-mute-canvas,
@@ -448,6 +449,9 @@ main:has(#letterboxd-link:hover) #letterboxd-preview {
 }
 main:has(.toggle-label:hover) .video {
 	visibility: hidden;
+	display: none;
+}
+main:has(.previewable-link:hover) #guide {
 	display: none;
 }
 
@@ -580,6 +584,354 @@ main:has(.previewable-link:hover) #preview-change-static {
 	font-family: Georgia, serif;
 }
 
+#guide {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	font-family: 'Alte Haas Grotesk Bold', 'Courier New', monospace;
+	text-shadow: 1px 1px 0px black;
+	filter: none !important;
+}
+
+@font-face {
+	font-family: 'Alte Haas Grotesk Bold';
+	src: url('alte-haas-grotesk-bold.ttf');
+}
+
+#guide * {
+	box-sizing: border-box;
+}
+
+#guide .guide-channel-banner {
+	height: 45%;
+	display: flex;
+	background: linear-gradient(180deg, lightskyblue 0%, navy 100%);
+}
+
+#guide .guide-channel-banner > * {
+	flex: 1;
+	max-width: 50%;
+	overflow: hidden;
+}
+
+#guide-left-banner {
+	animation: ad-colours 12s steps(6) infinite;
+}
+
+@keyframes ad-colours {
+	0%   { background-color: #cd5c5c; }
+	16%  { background-color: #9370db; }
+	33%  { background-color: #4169e1; }
+	49%  { background-color: #daa520; }
+	66%  { background-color: #228b22; }
+	83%  { background-color: #ff6347; }
+	100% { background-color: #cd5c5c; }
+}
+
+#guide-right-banner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#guide-upcoming {
+	color: white;
+	text-align: center;
+	font-size: 10px;
+	line-height: 13px;
+	filter: drop-shadow(1px 1px 0px black);
+	text-shadow: none;
+	padding: 4px;
+	width: 100%;
+}
+
+#guide-upcoming .title {
+	color: gold;
+	font-size: 11px;
+	line-height: 14px;
+}
+
+#guide-upcoming .description {
+	font-size: 8px;
+	line-height: 10px;
+	margin-top: 2px;
+	max-width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#guide-upcoming header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#guide-upcoming:empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+}
+
+#guide-upcoming:empty::before {
+	content: '';
+	display: block;
+	width: 24px;
+	height: 24px;
+	background: url('tv-listings.svg') no-repeat center / contain;
+	margin-right: 4px;
+}
+
+#guide-upcoming:empty::after {
+	content: 'TV Listings';
+	font-size: 11px;
+	line-height: 13px;
+}
+
+#guide .listings-container {
+	flex: 1;
+	background-color: navy;
+	position: relative;
+	overflow-y: hidden;
+}
+
+#guide .guide-time-clock {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 6fr;
+	color: white;
+	z-index: 3;
+	font-size: 6px;
+	line-height: 14px;
+}
+
+#guide .guide-time-clock time {
+	grid-column: span 1;
+	background-color: royalblue;
+	border-top: 1px solid white;
+	border-left: 1px solid white;
+	border-right: 1px solid #0c0c7a;
+	border-bottom: 1px solid #0c0c5b;
+	text-align: center;
+}
+
+#guide .guide-time-codes {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	color: gold;
+	display: grid;
+	grid-template-columns: 1fr 2fr 2fr 2fr;
+	font-size: 9px;
+	line-height: 14px;
+	z-index: 2;
+	background-color: royalblue;
+	border-top: 1px solid white;
+	border-left: 1px solid white;
+	border-right: 1px solid #0c0c7a;
+	border-bottom: 1px solid #0c0c5b;
+}
+
+#guide .guide-time-codes > * {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#guide .guide-time-codes::before {
+	content: '';
+	display: block;
+	grid-column: span 1;
+	border-right: 1px solid white;
+}
+
+#guide .guide-instance {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 100%;
+	display: flex;
+	flex-direction: column;
+	z-index: 1;
+}
+
+#guide .row {
+	color: white;
+	flex: 1;
+	display: grid;
+	grid-template-columns: 1fr 6fr;
+	border-bottom: 1px solid #0c0c5b;
+}
+
+#guide .row .channel-cell {
+	color: gold;
+	grid-column: span 1;
+	border-top: 1px solid white;
+	border-left: 1px solid white;
+	border-right: 1px solid #0c0c7a;
+	border-bottom: 1px solid #0c0c5b;
+	display: flex;
+	align-items: end;
+	justify-content: center;
+	flex-direction: column;
+	padding-right: 4px;
+	font-size: 11px;
+	line-height: 13px;
+}
+
+#guide .row .channel-contents {
+	grid-column: span 1;
+	display: grid;
+	grid-auto-rows: 1fr;
+}
+
+#guide .row .entry-cell {
+	border-top: 1px solid white;
+	border-left: 1px solid white;
+	border-right: 1px solid #0c0c7a;
+	border-bottom: 1px solid #0c0c5b;
+	overflow: hidden;
+	display: flex;
+}
+
+#guide .row .entry-cell[data-left="1"]::before,
+#guide .row .entry-cell[data-left="2"]::before,
+#guide .row .entry-cell[data-right="1"]::after,
+#guide .row .entry-cell[data-right="2"]::after {
+	content: '';
+	display: block;
+	height: 100%;
+	width: 10px;
+}
+
+#guide .row .entry-cell[data-right="1"]::after,
+#guide .row .entry-cell[data-right="2"]::after {
+	transform: rotate(180deg);
+}
+
+#guide .row .entry-cell[data-left="1"]::before {
+	background: url('triangle.svg') no-repeat center / contain;
+}
+
+#guide .row .entry-cell[data-left="2"]::before {
+	background: url('double-triangle.svg') no-repeat center / contain;
+}
+
+#guide .row .entry-cell[data-right="1"]::after {
+	background: url('triangle.svg') no-repeat center / contain;
+}
+
+#guide .row .entry-cell[data-right="2"]::after {
+	background: url('double-triangle.svg') no-repeat center / contain;
+}
+
+#guide .row .entry-contents-container {
+	flex: 1;
+	height: 100%;
+	position: relative;
+}
+
+#guide .row .entry-contents {
+	left: 3px;
+	top: 2px;
+	position: absolute;
+	height: calc(100% - 4px);
+	width: calc(100% - 6px);
+}
+
+#guide .row .entry-contents header {
+	font-size: 8px;
+	line-height: 10px;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+@media (max-width: 540px), (max-height: 420px) {
+	#guide .guide-channel-banner {
+		height: 45%;
+	}
+
+	#guide .listings-container {
+		flex: 1;
+	}
+
+	#guide .guide-time-codes {
+		font-size: 5px;
+		line-height: 7px;
+	}
+
+	#guide .guide-time-clock {
+		font-size: 4px;
+		line-height: 7px;
+	}
+
+	#guide .guide-instance {
+		height: 100%;
+	}
+
+	#guide .row .channel-cell {
+		font-size: 6px;
+		line-height: 7px;
+		padding-right: 2px;
+	}
+
+	#guide .row .entry-cell[data-left="1"]::before,
+	#guide .row .entry-cell[data-left="2"]::before,
+	#guide .row .entry-cell[data-right="1"]::after,
+	#guide .row .entry-cell[data-right="2"]::after {
+		width: 5px;
+	}
+
+	#guide .row .entry-contents {
+		left: 1px;
+		top: 1px;
+		height: calc(100% - 2px);
+		width: calc(100% - 3px);
+	}
+
+	#guide .row .entry-contents header {
+		font-size: 4px;
+		line-height: 5px;
+	}
+
+	#guide-upcoming {
+		font-size: 5px;
+		line-height: 7px;
+	}
+
+	#guide-upcoming .title {
+		font-size: 6px;
+		line-height: 8px;
+	}
+
+	#guide-upcoming .description {
+		font-size: 4px;
+		line-height: 5px;
+	}
+
+	#guide-upcoming:empty::before {
+		width: 12px;
+		height: 12px;
+	}
+
+	#guide-upcoming:empty::after {
+		font-size: 6px;
+		line-height: 7px;
+	}
+}
+
 </style>
 	</head>
 	<body class="centered-elements" id="root">
@@ -646,6 +998,31 @@ main:has(.previewable-link:hover) #preview-change-static {
 										<div style="background-color: #1e1e1e; flex: 1"></div>
 										<div style="background-color: #282828; flex: 1"></div>
 										<div style="background-color: #1e1e1e; flex: 3"></div>
+									</div>
+								</div>
+								<div id="guide" style="display: none">
+									<div class="guide-channel-banner">
+										<div id="guide-left-banner"></div>
+										<div id="guide-right-banner">
+											<div id="guide-upcoming"></div>
+										</div>
+									</div>
+									<div class="listings-container">
+										<div class="guide-time-codes off-to-on">
+											<div class="now"></div>
+											<div class="after"></div>
+											<div class="later"></div>
+										</div>
+										<div class="guide-time-codes on-to-off">
+											<div class="now"></div>
+											<div class="after"></div>
+											<div class="later"></div>
+										</div>
+										<div class="guide-time-clock">
+											<time class="guide-clock"></time>
+										</div>
+										<div class="guide-instance off-to-on"></div>
+										<div class="guide-instance on-to-off"></div>
 									</div>
 								</div>
 								<video
@@ -1235,7 +1612,18 @@ const seededShuffle = (array, seed) => {
 const CHANNELS = [{"id":2,"code":"LAT","title":"Latest","randomise":false,"videos":[{"src":"mp4/tokyo2k26.mp4","description":"tokyo2k26","credits":"lee's greenhouse - dana and alden","ms":175292}]},{"id":3,"code":"CMP","title":"Camping","randomise":true,"videos":[{"src":"mp4/camping/L1070726.mp4","description":"L1070726","credits":"passage xxii - modern silent cinema","ms":10500},{"src":"mp4/camping/L1070727.mp4","description":"L1070727","credits":"passage xxiv - modern silent cinema","ms":31500},{"src":"mp4/camping/L1070746.mp4","description":"L1070746","credits":"passage xxiii - modern silent cinema","ms":20500},{"src":"mp4/camping/L1070747.mp4","description":"L1070747","credits":"passage xxvi - modern silent cinema","ms":20500},{"src":"mp4/camping/L1070750.mp4","description":"L1070750","credits":"passage xxv - modern silent cinema","ms":31000},{"src":"mp4/camping/L1070755.mp4","description":"L1070755","credits":"passage xxvii - modern silent cinema","ms":27000},{"src":"mp4/camping/L1070759.mp4","description":"L1070759","credits":"passage xxviii - modern silent cinema","ms":16500},{"src":"mp4/camping/L1070760.mp4","description":"L1070760","credits":"passage xxix - modern silent cinema","ms":23500},{"src":"mp4/camping/L1070765.mp4","description":"L1070765","credits":"passage xxx - modern silent cinema","ms":18000},{"src":"mp4/camping/L1070764.mp4","description":"L1070764","credits":"passage xxxi - modern silent cinema","ms":19500},{"src":"mp4/camping/L1070766.mp4","description":"L1070766","credits":"passage xxxii - modern silent cinema","ms":21500},{"src":"mp4/camping/L1070767.mp4","description":"L1070767","credits":"a sceptical day - dorian concept","ms":29500},{"src":"mp4/camping/L1070770.mp4","description":"L1070770","credits":"an arc of doves - harold budd & brian eno","ms":4000},{"src":"mp4/camping/L1070774.mp4","description":"L1070774","credits":"hop on down - arthur russell","ms":7000},{"src":"mp4/camping/L1070775.mp4","description":"L1070775","credits":"it tango - laurie anderson","ms":5500},{"src":"mp4/camping/L1070776.mp4","description":"L1070776","credits":"lovefool (tee's club radio mix) - the cardigans","ms":4500},{"src":"mp4/camping/L1070780.mp4","description":"L1070780","credits":"bonny - prefab sprout","ms":10000},{"src":"mp4/camping/L1070781.mp4","description":"L1070781","credits":"ooh it's kinda crazy - souldecision","ms":9500},{"src":"mp4/camping/L1070782.mp4","description":"L1070782","credits":"long time - intro - playboi carti","ms":9500},{"src":"mp4/camping/L1070783.mp4","description":"L1070783","credits":"只爱陌生人 - faye wong","ms":6000},{"src":"mp4/camping/L1070786.mp4","description":"L1070786","credits":"open - cities aviv","ms":24500},{"src":"mp4/camping/L1070790.mp4","description":"L1070790","credits":"ou-ou-ta - hailu mergia & the walias band","ms":131000},{"src":"mp4/camping/L1070793.mp4","description":"L1070793","credits":"sah - al massrieen","ms":10500},{"src":"mp4/camping/L1070794.mp4","description":"L1070794","credits":"sfire 1 - sfire","ms":16500},{"src":"mp4/camping/L1070795.mp4","description":"L1070795","credits":"flashback - kelis","ms":17500},{"src":"mp4/camping/L1070797.mp4","description":"L1070797","credits":"for corners - digable planets","ms":11000},{"src":"mp4/camping/L1070798.mp4","description":"L1070798","credits":"only love can break your heart - saint etienne","ms":22000},{"src":"mp4/camping/L1070799.mp4","description":"L1070799","credits":"your love - frankie knuckles","ms":15000},{"src":"mp4/camping/L1070800.mp4","description":"L1070800","credits":"snowblind - tanya tagaq","ms":6500}]},{"id":4,"code":"BFR","title":"Before","randomise":false,"videos":[{"src":"mp4/juandefuca2025.mp4","description":"juandefuca2025","credits":"the whistle song - frankie knuckles","ms":150057},{"src":"mp4/lucycanontaro.mp4","description":"lucycanontaro - 2020","credits":"lucy - alex g","ms":125566}]}];
 // __CHANNELS_END__
 
-let currentChannelIndex = 0;
+if (!CHANNELS.find(function (c) { return c.isGuide; })) {
+	CHANNELS.unshift({
+		id: 1,
+		code: 'TVG',
+		title: 'TV Guide',
+		isGuide: true,
+		randomise: false,
+		videos: [],
+	});
+}
+
+let currentChannelIndex = 1;
 
 const getCurrentChannel = () => CHANNELS[currentChannelIndex];
 
@@ -1293,6 +1681,492 @@ const channelNextVideo = (channel, fromIndex, iteration) => {
 		index: nextIndex,
 		iteration: nextIteration,
 	};
+};
+
+</script>
+		<script>
+var ENTERING_KEY_FRAMES = [ { top: '100%' }, { top: '0' } ];
+var EXITING_KEY_FRAMES = [ { top: '0' }, { top: '-100%' } ];
+var FPS = 30;
+
+var TV_UNIT = 30000;
+var ON_SCREEN_COUNT = 3;
+var ROW_COUNT = 4;
+var CYCLE_DURATION = 7500;
+var PRECISION = 5000;
+var COLUMNS = 3;
+var NEXT_UNIT_DELTA_PCT = 0.2;
+
+var INSTANCE_COUNT = Math.ceil(ROW_COUNT / ON_SCREEN_COUNT) + 1;
+var INSTANCE_DURATION = CYCLE_DURATION / INSTANCE_COUNT;
+
+</script>
+		<script>
+var GuideClock = function(durations, offset) {
+	this.durations = durations;
+	this.offset = offset;
+};
+
+GuideClock.prototype.calculate = function(time) {
+	var now = time + this.offset;
+	var unit = Math.floor(now / this.durations.unit);
+	var unitAt = now % this.durations.unit;
+	var cycle = Math.floor(unitAt / this.durations.cycle);
+	var cycleAt = now % this.durations.cycle;
+	var instance = Math.floor(cycleAt / this.durations.instance);
+	var instanceAt = now % this.durations.instance;
+	return {
+		now: now,
+		unit: { index: unit, at: unitAt, remaining: this.durations.unit - unitAt },
+		cycle: { index: cycle, at: cycleAt, remaining: this.durations.cycle - cycleAt },
+		instance: { index: instance, at: instanceAt, remaining: this.durations.instance - instanceAt }
+	};
+};
+
+GuideClock.prototype.at = function(at) {
+	return this.calculate(at);
+};
+
+GuideClock.prototype.now = function() {
+	return this.calculate(getTime());
+};
+
+</script>
+		<script>
+var Renderer = function(clock) {
+	this.clock = clock;
+	this._animations = [];
+	this._effects = {
+		instance: [],
+		cycle: [],
+		unit: []
+	};
+	this._lastEffects = {
+		instance: -1,
+		cycle: -1,
+		unit: -1
+	};
+	this._loop();
+};
+
+Renderer.prototype.animate = function(props) {
+	var self = this;
+	var elements = [].concat(props.element);
+	var options = props.options(self.clock.durations);
+	elements.forEach(function(element) {
+		var animation = element.animate(props.keyframes, options);
+		self._animations.push({ animation: animation, timing: props.timing });
+	});
+};
+
+Renderer.prototype.effect = function(props) {
+	this._effects[props.when].push(props.effect);
+};
+
+Renderer.prototype._loop = function() {
+	var self = this;
+	var tick = function() {
+		var instant = self.clock.now();
+
+		['unit', 'cycle', 'instance'].forEach(function(when) {
+			if (instant[when].index !== self._lastEffects[when]) {
+				self._effects[when].forEach(function(effect) {
+					effect(instant, self.clock.durations);
+				});
+				self._lastEffects[when] = instant[when].index;
+			}
+		});
+
+		self._animations.forEach(function(anim) {
+			anim.animation.currentTime = anim.timing(instant, self.clock.durations);
+		});
+
+		requestAnimationFrame(tick);
+	};
+	requestAnimationFrame(tick);
+};
+
+</script>
+		<script>
+var getOverflow = function(difference, unit) {
+	if (difference > unit) return 2;
+	if (difference > 0) return 1;
+	return 0;
+};
+
+var selectSchedule = function(env) {
+	var start = env.start;
+	var episodes = env.episodes;
+	var columnDuration = env.columnDuration;
+	var unitCount = env.unitCount;
+	var unitDuration = env.unitDuration;
+
+	var end = start + unitDuration * unitCount;
+	var filled = 0;
+	var output = [];
+
+	for (var i = 0; i < episodes.length; i++) {
+		var episode = episodes[i];
+		if (episode.end <= start) continue;
+		if (episode.start >= end) continue;
+
+		var left = getOverflow(start - episode.start, columnDuration);
+		var right = getOverflow(episode.end - end, columnDuration);
+		var length = Math.min(end, episode.end) - Math.max(start, episode.start);
+		var units = Math.min(Math.floor(length / unitDuration), unitCount);
+		if (units <= 0) {
+			if (length > 0 && filled < unitCount) {
+				units = Math.min(1, unitCount - filled);
+			} else {
+				continue;
+			}
+		}
+		filled += units;
+
+		output.push({
+			left: left,
+			right: right,
+			units: units,
+			cc: false,
+			series: episode.series,
+			title: episode.title,
+			start: episode.start,
+			end: episode.end
+		});
+
+		if (filled >= unitCount) break;
+	}
+
+	return output;
+};
+
+var snapTime = function(time, unit) {
+	return Math.round(time / unit) * unit;
+};
+
+var channelSchedule = function(channel, startTime, windowMs) {
+	if (!channel.videos || !channel.videos.length) return [];
+
+	var result = [];
+	var videoAt = channelVideosAt(channel, startTime);
+
+	var firstStart = snapTime(startTime - videoAt.at, PRECISION);
+	var firstEnd = snapTime(firstStart + videoAt.video.ms, PRECISION);
+
+	result.push({
+		title: videoAt.video.description,
+		start: firstStart,
+		end: firstEnd,
+		cc: false,
+		series: videoAt.video.description
+	});
+
+	var currentTime = firstEnd;
+	var currentIndex = videoAt.index;
+	var currentIteration = videoAt.iteration;
+
+	while (currentTime < startTime + windowMs) {
+		var next = channelNextVideo(channel, currentIndex, currentIteration);
+		var nextEnd = snapTime(currentTime + next.video.ms, PRECISION);
+		result.push({
+			title: next.video.description,
+			start: currentTime,
+			end: nextEnd,
+			cc: false,
+			series: next.video.description
+		});
+		currentTime = nextEnd;
+		currentIndex = next.index;
+		currentIteration = next.iteration;
+	}
+
+	return result;
+};
+
+var scheduler = function(instant, durations) {
+	var start = instant.now - instant.unit.at;
+	var unitCount = (COLUMNS * durations.unit) / PRECISION;
+
+	return CHANNELS.map(function(channel) {
+		var episodes = channelSchedule(channel, start, COLUMNS * durations.unit);
+		var env = {
+			episodes: episodes,
+			columnDuration: durations.unit,
+			unitCount: unitCount,
+			start: start,
+			unitDuration: PRECISION
+		};
+		var schedule = episodes.length
+			? selectSchedule(env)
+			: [{
+				series: channel.title,
+				title: '',
+				cc: false,
+				units: env.unitCount,
+				left: 0,
+				right: 0,
+				start: start,
+				end: start + COLUMNS * durations.unit
+			}];
+		return { code: channel.code, displayNumber: channel.id + 1, schedule: schedule };
+	});
+};
+
+</script>
+		<script>
+var createEntryCell = function(entry) {
+	var entryCell = document.createElement('div');
+	entryCell.classList.add('entry-cell');
+	entryCell.dataset.left = String(entry.left);
+	entryCell.dataset.right = String(entry.right);
+	entryCell.style.gridColumn = 'span ' + entry.units;
+
+	if (entry.title) {
+		var spacing = document.createElement('div');
+		spacing.classList.add('entry-contents-container');
+		entryCell.appendChild(spacing);
+
+		var contents = document.createElement('div');
+		contents.classList.add('entry-contents');
+		spacing.appendChild(contents);
+
+		var header = document.createElement('header');
+		header.innerText = entry.title;
+		contents.appendChild(header);
+	}
+
+	return entryCell;
+};
+
+var updateChannelRow = function(rowDiv, channel) {
+	rowDiv.replaceChildren();
+
+	var channelCell = document.createElement('div');
+	channelCell.classList.add('channel-cell');
+	rowDiv.appendChild(channelCell);
+
+	var idDiv = document.createElement('div');
+	idDiv.innerText = String(channel.displayNumber).padStart(2, '0');
+	channelCell.appendChild(idDiv);
+
+	var codeDiv = document.createElement('div');
+	codeDiv.innerText = channel.code;
+	channelCell.appendChild(codeDiv);
+
+	var contents = document.createElement('div');
+	contents.classList.add('channel-contents');
+	contents.style.gridTemplateColumns = 'repeat(' + ((COLUMNS * TV_UNIT) / PRECISION) + ', 1fr)';
+	rowDiv.appendChild(contents);
+
+	for (var i = 0; i < channel.schedule.length; i++) {
+		contents.appendChild(createEntryCell(channel.schedule[i]));
+	}
+};
+
+var updateRow = function(div, channels, channelId) {
+	if (channelId > 0 && channelId - 1 < channels.length) {
+		var channel = channels[channelId - 1];
+		updateChannelRow(div, channel);
+	} else {
+		div.innerText = '';
+	}
+};
+
+var drawInstance = function(container, instanceSize, rowCount, channelStart, channels) {
+	var expected = 0;
+	for (var i = 0; i < instanceSize; i++) {
+		var channel = channelStart + i;
+		var child = container.children.item(i);
+		if (!child) {
+			child = document.createElement('div');
+			container.appendChild(child);
+		}
+		child.classList.add('row');
+		expected++;
+		if (channel >= 0 && channel < rowCount) {
+			updateRow(child, channels, channel + 1);
+		} else {
+			child.innerText = '';
+		}
+	}
+	while (container.children.length > expected) {
+		container.removeChild(container.lastChild);
+	}
+};
+
+</script>
+		<script>
+var formatTime = function(ms) {
+	var d = new Date(ms);
+	var h = d.getHours();
+	var m = String(d.getMinutes()).padStart(2, '0');
+	var s = String(d.getSeconds()).padStart(2, '0');
+	var ampm = h >= 12 ? 'PM' : 'AM';
+	h = h % 12 || 12;
+	return h + ':' + m + ':' + s + ' ' + ampm;
+};
+
+var drawTimeCodes = function(startTime, durations) {
+	var nowStr = formatTime(startTime);
+	var afterStr = formatTime(startTime + durations.unit);
+	var laterStr = formatTime(startTime + durations.unit * 2);
+
+	var headers = document.querySelectorAll('.guide-time-codes');
+	for (var h = 0; h < headers.length; h++) {
+		var header = headers[h];
+		var nowEl = header.querySelector('.now');
+		var afterEl = header.querySelector('.after');
+		var laterEl = header.querySelector('.later');
+		if (nowEl) nowEl.innerText = nowStr;
+		if (afterEl) afterEl.innerText = afterStr;
+		if (laterEl) laterEl.innerText = laterStr;
+	}
+};
+
+var updateClock = function() {
+	var clocks = document.querySelectorAll('.guide-clock');
+	for (var i = 0; i < clocks.length; i++) {
+		clocks[i].innerText = formatTime(getTime());
+	}
+};
+
+</script>
+		<script>
+var drawUpcoming = function(container, tvUnitStartTime, cycle, durations, channels) {
+	var seed = tvUnitStartTime + '-' + cycle;
+	var random = seededRandom(seed);
+	var realChannels = channels.filter(function(c) { return !c.isGuide; });
+	if (!realChannels.length) return;
+
+	var channelIndex = Math.floor(random() * realChannels.length);
+	var channel = realChannels[channelIndex];
+	var unitsAway = 2 + Math.floor(random() * 5);
+	var futureTime = tvUnitStartTime + durations.unit * unitsAway;
+
+	container.replaceChildren();
+	var playing;
+	try {
+		playing = channelVideosAt(channel, futureTime);
+	} catch (_e) {
+		return;
+	}
+
+	var channelTitle = document.createElement('div');
+	channelTitle.innerText = channel.title;
+	container.appendChild(channelTitle);
+
+	var header = document.createElement('header');
+	container.appendChild(header);
+
+	var titleDiv = document.createElement('div');
+	titleDiv.classList.add('title');
+	titleDiv.innerText = playing.video.description;
+	header.appendChild(titleDiv);
+
+	var description = document.createElement('div');
+	description.classList.add('description');
+	description.innerText = playing.video.credits;
+	container.appendChild(description);
+
+	var showing = document.createElement('div');
+	var futureDate = new Date(futureTime);
+	var hours = futureDate.getHours();
+	var mins = String(futureDate.getMinutes()).padStart(2, '0');
+	var ampm = hours >= 12 ? 'PM' : 'AM';
+	hours = hours % 12 || 12;
+	showing.innerText = 'Showing at ' + hours + ':' + mins + ' ' + ampm;
+	container.appendChild(showing);
+
+	var channelId = document.createElement('div');
+	channelId.innerText = 'Channel ' + String(channel.id + 1).padStart(2, '0');
+	container.appendChild(channelId);
+};
+
+</script>
+		<script>
+var _channels = [];
+
+var initGuide = function() {
+	var durations = {
+		instance: INSTANCE_DURATION,
+		cycle: CYCLE_DURATION,
+		unit: TV_UNIT
+	};
+
+	var clock = new GuideClock(durations, NEXT_UNIT_DELTA_PCT * TV_UNIT);
+	var renderer = new Renderer(clock);
+
+	var makeOptions = function(d) {
+		return {
+			duration: d.instance,
+			easing: 'steps(' + FPS * Math.round(d.instance / 1000) + ')'
+		};
+	};
+
+	var enteringDiv = document.querySelector('.guide-instance.off-to-on');
+	var exitingDiv = document.querySelector('.guide-instance.on-to-off');
+	var timeEntering = document.querySelector('.guide-time-codes.off-to-on');
+	var timeExiting = document.querySelector('.guide-time-codes.on-to-off');
+
+	if (!enteringDiv || !exitingDiv || !timeEntering || !timeExiting) return { clock: clock, renderer: renderer };
+
+	renderer.animate({
+		element: timeEntering,
+		keyframes: ENTERING_KEY_FRAMES,
+		options: makeOptions,
+		timing: function(time) { return time.cycle.at; }
+	});
+
+	renderer.animate({
+		element: timeExiting,
+		keyframes: EXITING_KEY_FRAMES,
+		options: makeOptions,
+		timing: function(time) { return time.cycle.at; }
+	});
+
+	renderer.effect({
+		when: 'cycle',
+		effect: function(time, d) {
+			_channels = scheduler(time, d);
+			drawUpcoming(
+				document.getElementById('guide-upcoming'),
+				time.now - time.unit.at,
+				time.cycle.index,
+				d,
+				CHANNELS
+			);
+		}
+	});
+
+	renderer.effect({
+		when: 'instance',
+		effect: function(time, d) {
+			var tvUnitStartTime = time.now - time.unit.at;
+			drawTimeCodes(tvUnitStartTime, d);
+			var past = time.instance.index * ON_SCREEN_COUNT;
+			drawInstance(exitingDiv, ON_SCREEN_COUNT, ROW_COUNT, past - ON_SCREEN_COUNT, _channels);
+			drawInstance(enteringDiv, ON_SCREEN_COUNT, ROW_COUNT, past, _channels);
+		}
+	});
+
+	updateClock();
+	setInterval(updateClock, 1000);
+
+	renderer.animate({
+		element: enteringDiv,
+		keyframes: ENTERING_KEY_FRAMES,
+		options: makeOptions,
+		timing: function(time) { return time.instance.at; }
+	});
+
+	renderer.animate({
+		element: exitingDiv,
+		keyframes: EXITING_KEY_FRAMES,
+		options: makeOptions,
+		timing: function(time) { return time.instance.at; }
+	});
+
+	return { clock: clock, renderer: renderer };
 };
 
 </script>
@@ -1528,6 +2402,34 @@ const playNext = () => {
 
 const tuneChannel = (channel, announce = false) => {
 	clearTimeout(failsafeTimeout);
+	overlay.classList.add("loading");
+	if (channel.isGuide) {
+		playing = null;
+		player.pause();
+		player.removeAttribute('src');
+		player.style.display = 'none';
+		if (endedListener) {
+			player.removeEventListener('ended', endedListener);
+			endedListener = null;
+		}
+		channelChangeStatic.in({ seconds: 0.1 });
+		setTimeout(() => {
+			overlay.classList.remove("loading");
+			channelChangeStatic.out({ seconds: 0.2 });
+		}, 200);
+		var guide = document.getElementById('guide');
+		if (guide) guide.style.display = '';
+		if (!window._guideInitialized) {
+			window._guideInitialized = initGuide();
+		}
+		if (announce) showChannelOsd(channel);
+		return;
+	}
+
+	var guide = document.getElementById('guide');
+	if (guide) guide.style.display = 'none';
+	player.style.display = '';
+
 	channelChangeStatic.in({ seconds: 0.1 });
 	setTimeout(() => {
 		const now = getTime();
@@ -1630,7 +2532,7 @@ const changeChannel = (hovering) => () => {
 	} else {
 		videoControl.in({ seconds: 0.2 });
 		previewStatic.out({ seconds: 0.1 });
-		player.play();
+		if (playing) player.play();
 	}
 };
 
