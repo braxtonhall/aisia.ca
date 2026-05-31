@@ -211,7 +211,11 @@
 				height: 400px !important;
 			}
 
-			:has(#bobs-club-toggle:checked) #bobs-club {
+			:has(#bobs-club-toggle:checked) #bobs-club-panel {
+				height: 48px !important;
+			}
+
+			:has(#vertical-bobs-club-toggle:checked) #bobs-club {
 				width: 96px !important;
 			}
 
@@ -272,6 +276,27 @@
 						display: unset;
 					}
 				}
+			}
+
+			#bobs-club-panel {
+				transition: height 0.3s;
+				height: 0;
+				overflow: hidden;
+				box-sizing: border-box;
+			}
+
+			#bobs-club-panel-contents {
+				height: 48px;
+				box-sizing: border-box;
+				padding: 6px;
+				display: flex;
+				flex-direction: row;
+				gap: 2px;
+				background-color: darkblue;
+			}
+
+			#bobs-club-panel-contents .bobs-club-link {
+				flex: 1;
 			}
 
 			#comments {
@@ -699,6 +724,21 @@
 								>🎥</a
 							>
 							<label
+								id="bobs-club-toggle-label"
+								for="bobs-club-toggle"
+								class="clickable previewable-link toggle-label"
+								title="bob's club links"
+							>
+								<span class="closed">🌍</span>
+								<span class="open">🌎</span>
+								<input
+									id="bobs-club-toggle"
+									type="checkbox"
+									style="position: absolute; left: 0; opacity: 0"
+									class="clickable toggle"
+								/>
+							</label>
+							<label
 								id="comment-toggle-label"
 								for="comment-toggle"
 								class="clickable previewable-link toggle-label"
@@ -714,21 +754,55 @@
 								/>
 							</label>
 							<label
-								id="bobs-club-toggle-label"
-								for="bobs-club-toggle"
+								id="vertical-bobs-club-toggle-label"
+								for="vertical-bobs-club-toggle"
 								style="float: right"
 								class="clickable previewable-link toggle-label"
-								title="bob's club links"
+								title="bob's club sidebar"
 							>
-								<span class="closed">🌍</span>
-								<span class="open">🌎</span>
+								<span class="closed">🕹️</span>
+								<span class="open">🎮</span>
 								<input
-									id="bobs-club-toggle"
+									id="vertical-bobs-club-toggle"
 									type="checkbox"
 									style="position: absolute; left: 0; opacity: 0"
 									class="clickable toggle"
 								/>
 							</label>
+						</div>
+
+						<div id="bobs-club-panel" class="squircle crt-wide" style="margin-top: 0.5em; margin-bottom: 0.5em">
+							<div id="bobs-club-panel-contents">
+								<a
+									class="bobs-club-link squircle"
+									href="https://bobs-club.net/site/aisiadotca/pred"
+									rel="external"
+									title="previous website"
+									>👈</a
+								>
+								<a
+									class="bobs-club-link squircle"
+									href="https://bobs-club.net/"
+									rel="external"
+									title="bob's club web ring"
+								>
+									<span>bob's club</span>
+								</a>
+								<a
+									class="bobs-club-link squircle"
+									href="https://bobs-club.net/site/aisiadotca/random"
+									rel="external"
+									title="random website"
+									>🎲</a
+								>
+								<a
+									class="bobs-club-link squircle"
+									href="https://bobs-club.net/site/aisiadotca/succ"
+									rel="external"
+									title="next website"
+									>👉</a
+								>
+							</div>
 						</div>
 
 						<iframe
