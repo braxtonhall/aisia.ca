@@ -1,0 +1,8 @@
+{
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "node build.mjs",
+		"watch": "node --watch --watch-path=./js --watch-path=./css --watch-path=./index.html --watch-path=./static build.mjs"
+	}
+}
