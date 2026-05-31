@@ -1,6 +1,6 @@
 # `aisia.ca`
 
-this is a handmade website, for my friend aisia
+this is a small website, for my friend aisia
 
 <p align="center"><img src="png/screenshot.png" alt="screenshot of the website"></p>
 
