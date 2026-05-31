@@ -303,6 +303,11 @@ table {
 	border-spacing: 8px 0;
 }
 
+.no-js #remote-toggle-label,
+.no-js #remote {
+	display: none !important;
+}
+
 .toggle-label {
 	position: relative;
 	.closed {
