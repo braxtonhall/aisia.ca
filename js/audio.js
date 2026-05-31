@@ -20,9 +20,7 @@ const channelChangeStatic = new Fade(context)
 const previewStatic = new Fade(context)
 	.out({ seconds: 0 })
 	.addInput(
-		new Clamp(context, 0.05).addInput(
-			new Oscillator(context, "sawtooth", 60),
-		),
+		new Clamp(context, 0.05).addInput(new Oscillator(context, "sawtooth", 60)),
 		new Clamp(context, 0.03).addInput(new Noise(context, "pink")),
 	)
 	.addOutput(master);

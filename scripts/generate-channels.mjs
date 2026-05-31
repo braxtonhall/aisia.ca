@@ -193,28 +193,36 @@ const CHANNELS = [
 
 function probeMs(filePath) {
 	if (!existsSync(filePath)) {
-	
 		return null;
 	}
-	const stdout = execFileSync("ffprobe", [
-		"-v", "error",
-		"-show_entries", "format=duration",
-		"-of", "default=noprint_wrappers=1:nokey=1",
-		filePath,
-	], { encoding: "utf-8" });
+	const stdout = execFileSync(
+		"ffprobe",
+		[
+			"-v",
+			"error",
+			"-show_entries",
+			"format=duration",
+			"-of",
+			"default=noprint_wrappers=1:nokey=1",
+			filePath,
+		],
+		{ encoding: "utf-8" },
+	);
 	return Math.round(parseFloat(stdout.trim()) * 1000);
 }
 
 const result = CHANNELS.map((channel) => ({
 	...channel,
-	videos: channel.videos.map((video) => {
-		const fullPath = join(ROOT, "static", video.src);
-		const ms = probeMs(fullPath);
-		if (ms !== null) {
-			return { ...video, ms };
-		}
-		return null;
-	}).filter(Boolean),
+	videos: channel.videos
+		.map((video) => {
+			const fullPath = join(ROOT, "static", video.src);
+			const ms = probeMs(fullPath);
+			if (ms !== null) {
+				return { ...video, ms };
+			}
+			return null;
+		})
+		.filter(Boolean),
 })).filter((c) => c.videos.length > 0);
 
 const outPath = join(ROOT, "channels.json");

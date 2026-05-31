@@ -157,9 +157,7 @@ class Noise extends Node {
 		if (!Noise.ready) {
 			Noise.ready = context.audioWorklet.addModule(
 				"data:text/javascript," +
-					encodeURI(
-						document.getElementById("noise-generators").innerHTML,
-					),
+					encodeURI(document.getElementById("noise-generators").innerHTML),
 			);
 		}
 		return Noise.ready;

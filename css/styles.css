@@ -544,10 +544,10 @@ main:has(.previewable-link:hover) #preview-change-static {
 	height: 100%;
 	filter: blur(0.04rem) brightness(1.4);
 	background:
-		repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%)
-			50% 0/2500px 2500px,
-		repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60%
-			60%/2500px 2500px;
+		repeating-radial-gradient(#000 0, #000 0.0001%, #fff 0, #fff 0.0002%) 50%
+			0/2500px 2500px,
+		repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60% 60%/2500px
+			2500px;
 	background-blend-mode: difference;
 	animation: static 0.2s infinite steps(60) alternate;
 }

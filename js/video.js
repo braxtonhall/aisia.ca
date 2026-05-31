@@ -4,10 +4,18 @@ let endedListener = null;
 let failsafeTimeout = null;
 
 player.loop = false;
-player.addEventListener("canplay", () => {
+let pendingTargetAt = -1;
+
+const hideLoading = () => {
+	if (pendingTargetAt < 0) return;
+	if (player.currentTime < pendingTargetAt - 0.5) return;
+	pendingTargetAt = -1;
 	overlay.classList.remove("loading");
 	videoChangeStatic.out({ seconds: 0.2 });
-});
+};
+
+player.addEventListener("seeked", hideLoading);
+player.addEventListener("playing", hideLoading);
 
 const setEnded = () => {
 	if (endedListener) {
@@ -18,6 +26,7 @@ const setEnded = () => {
 };
 
 const loadVideo = (video, at) => {
+	pendingTargetAt = at / 1000;
 	overlay.classList.add("loading");
 	videoChangeStatic.in({ seconds: 0.01 });
 	player.src = video.src;

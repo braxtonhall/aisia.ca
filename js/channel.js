@@ -44,7 +44,7 @@ const getCurrentChannel = () => CHANNELS[currentChannelIndex];
 
 const navigateChannel = (delta) => {
 	currentChannelIndex =
-		((currentChannelIndex + delta) % CHANNELS.length + CHANNELS.length) %
+		(((currentChannelIndex + delta) % CHANNELS.length) + CHANNELS.length) %
 		CHANNELS.length;
 	return CHANNELS[currentChannelIndex];
 };
@@ -91,5 +91,9 @@ const channelNextVideo = (channel, fromIndex, iteration) => {
 	}
 	const nextIndex = (fromIndex + 1) % videos.length;
 	const nextIteration = nextIndex === 0 ? iteration + 1 : iteration;
-	return { video: videos[nextIndex], index: nextIndex, iteration: nextIteration };
+	return {
+		video: videos[nextIndex],
+		index: nextIndex,
+		iteration: nextIteration,
+	};
 };
