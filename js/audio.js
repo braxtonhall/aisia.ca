@@ -7,6 +7,15 @@ const videoControl = new Fade(context)
 	.addOutput(master)
 	.addInput(new Media(context, player));
 
+const guideControl = new Fade(context)
+	.out({ seconds: 0 })
+	.addInput(
+		new Clamp(context, 0.01).addInput(new Oscillator(context, "sawtooth", 60*8)),
+		new Clamp(context, 0.03).addInput(new Oscillator(context, "sawtooth", 60)),
+		new Clamp(context, 0.02).addInput(new Noise(context, "pink")),
+	)
+	.addOutput(videoControl);
+
 const videoChangeStatic = new Fade(context)
 	.out({ seconds: 0 })
 	.addInput(new Noise(context, "pink"))

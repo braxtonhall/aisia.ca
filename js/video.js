@@ -70,6 +70,7 @@ const tuneChannel = (channel, announce = false) => {
 		guideLoadingTimeout = setTimeout(() => {
 			overlay.classList.remove("loading");
 			channelChangeStatic.out({ seconds: 0.2 });
+			guideControl.in({ seconds: 0.2 });
 		}, 200);
 		var guide = document.getElementById('guide');
 		if (guide) guide.style.display = '';
@@ -81,6 +82,8 @@ const tuneChannel = (channel, announce = false) => {
 		drawInfo();
 		if (announce) showChannelOsd(channel);
 		return;
+	} else {
+		guideControl.out({ seconds: 0.2 });
 	}
 
 	var guide = document.getElementById('guide');

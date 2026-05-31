@@ -3,7 +3,8 @@ const muteControl = document.getElementById("mute-control");
 const previewLinks = document.getElementsByClassName("previewable-link");
 
 let muted = true;
-const toggleMute = () => {
+const toggleMute = (event) => {
+	event.stopPropagation();
 	muted = !muted;
 	storage.dataset.muted = muted;
 	if (muted) {
