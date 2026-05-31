@@ -848,7 +848,7 @@ main:has(.previewable-link:hover) #preview-change-static {
 }
 
 #guide .bobs-club-header time {	
-	grid-column: span 6;
+	grid-column: span 1;
 	border-top: 1px solid white;
 	border-left: 1px solid white;
 	border-right: 1px solid #0c0c7a;
@@ -857,8 +857,8 @@ main:has(.previewable-link:hover) #preview-change-static {
 	align-items: center;
 	justify-content: center;
 	color: gold;
-	font-size: 0; /*9px;*/
-	line-height: 0; /*14px;*/
+	font-size: 9px;
+	line-height: 14px;
 }
 
 #guide .row {
