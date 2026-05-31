@@ -80,5 +80,42 @@ var initGuide = function() {
 		timing: function(time) { return time.instance.at; }
 	});
 
+	// --- Bob's Club panel ---
+	var bobsClubPane = document.getElementById('bobs-club-pane');
+	var bobsClubHeader = document.querySelector('.bobs-club-header');
+	var bobsClubDateEls = document.querySelectorAll('.bobs-club-date');
+
+	if (bobsClubPane && bobsClubHeader) {
+		renderer.animate({
+			element: bobsClubPane,
+			keyframes: ENTERING_KEY_FRAMES,
+			options: makeOptions,
+			timing: function(time, d) { return time.cycle.at - (d.cycle - d.instance); }
+		});
+		renderer.animate({
+			element: bobsClubPane,
+			keyframes: EXITING_KEY_FRAMES,
+			options: makeOptions,
+			timing: function(time) { return time.cycle.at; }
+		});
+		renderer.animate({
+			element: bobsClubHeader,
+			keyframes: ENTERING_KEY_FRAMES,
+			options: makeOptions,
+			timing: function(time, d) { return time.cycle.at - (d.cycle - d.instance); }
+		});
+		renderer.animate({
+			element: bobsClubHeader,
+			keyframes: EXITING_KEY_FRAMES,
+			options: makeOptions,
+			timing: function(time) { return time.cycle.at; }
+		});
+
+		BobClubRenderer.draw(bobsClubPane, Array.from(bobsClubDateEls));
+		setInterval(function() {
+			BobClubRenderer.draw(bobsClubPane, Array.from(bobsClubDateEls));
+		}, 1000);
+	}
+
 	return { clock: clock, renderer: renderer };
 };

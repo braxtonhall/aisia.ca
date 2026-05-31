@@ -751,6 +751,103 @@ main:has(.previewable-link:hover) #preview-change-static {
 	z-index: 1;
 }
 
+#bobs-club-pane {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	color: white;
+	z-index: 1;
+}
+
+#bobs-club-pane .bobs-club {
+	position: absolute;
+	height: calc(100% - 25% / 2);
+	bottom: 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4%;
+}
+
+#bobs-club-pane .bobs-club-card {
+	aspect-ratio: 2 / 3;
+	width: 16%;
+	border-top: 1px solid white;
+	border-left: 1px solid white;
+	border-right: 1px solid #0c0c7a;
+	border-bottom: 1px solid #0c0c5b;
+	background: linear-gradient(180deg, mediumpurple 0%, darkblue 100%);
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	text-decoration: none;
+	color: white;
+}
+
+#bobs-club-pane .bobs-club-card .card-emoji {
+	position: absolute;
+	width: 100%;
+	top: 15%;
+	text-align: center;
+	font-size: 200%;
+}
+
+#bobs-club-pane .bobs-club-card .card-info {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	padding: 4px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	pointer-events: none;
+}
+
+#bobs-club-pane .bobs-club-card .card-info header {
+	color: gold;
+	font-size: 9px;
+	line-height: 11px;
+	margin-top: auto;
+	margin-bottom: 4px;
+}
+
+#guide .bobs-club-header {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: calc(25% / 2);
+	background-color: royalblue;
+	z-index: 2;
+	display: grid;
+	grid-template-columns: 1fr 6fr;
+}
+
+#guide .bobs-club-header::before {
+	content: '';
+	display: block;
+	border-top: 1px solid white;
+	border-left: 1px solid white;
+	border-right: 1px solid #0c0c7a;
+	border-bottom: 1px solid #0c0c5b;
+}
+
+#guide .bobs-club-header time {
+	grid-column: span 6;
+	border-top: 1px solid white;
+	border-left: 1px solid white;
+	border-right: 1px solid #0c0c7a;
+	border-bottom: 1px solid #0c0c5b;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: gold;
+	font-size: 9px;
+	line-height: 14px;
+}
+
 #guide .row {
 	color: white;
 	flex: 1;
@@ -920,5 +1017,25 @@ main:has(.previewable-link:hover) #preview-change-static {
 	#guide-upcoming:empty::after {
 		font-size: 6px;
 		line-height: 7px;
+	}
+
+	#bobs-club-pane .bobs-club-card .card-info header {
+		font-size: 5px;
+		line-height: 7px;
+		margin-bottom: 2px;
+	}
+
+	#bobs-club-pane .bobs-club-card .card-emoji {
+		font-size: 150%;
+	}
+
+	#guide .bobs-club-header time {
+		font-size: 5px;
+		line-height: 7px;
+	}
+
+	#bobs-club-pane .bobs-club {
+		gap: 2%;
+	}
 	}
 }
