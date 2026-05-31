@@ -2345,6 +2345,15 @@ const videoControl = new Fade(context)
 	.addOutput(master)
 	.addInput(new Media(context, player));
 
+const guideControl = new Fade(context)
+	.out({ seconds: 0 })
+	.addInput(
+		new Clamp(context, 0.01).addInput(new Oscillator(context, "sawtooth", 60*8)),
+		new Clamp(context, 0.03).addInput(new Oscillator(context, "sawtooth", 60)),
+		new Clamp(context, 0.02).addInput(new Noise(context, "pink")),
+	)
+	.addOutput(videoControl);
+
 const videoChangeStatic = new Fade(context)
 	.out({ seconds: 0 })
 	.addInput(new Noise(context, "pink"))
@@ -2437,6 +2446,7 @@ const tuneChannel = (channel, announce = false) => {
 		guideLoadingTimeout = setTimeout(() => {
 			overlay.classList.remove("loading");
 			channelChangeStatic.out({ seconds: 0.2 });
+			guideControl.in({ seconds: 0.2 });
 		}, 200);
 		var guide = document.getElementById('guide');
 		if (guide) guide.style.display = '';
@@ -2448,6 +2458,8 @@ const tuneChannel = (channel, announce = false) => {
 		drawInfo();
 		if (announce) showChannelOsd(channel);
 		return;
+	} else {
+		guideControl.out({ seconds: 0.2 });
 	}
 
 	var guide = document.getElementById('guide');
@@ -2491,7 +2503,8 @@ const muteControl = document.getElementById("mute-control");
 const previewLinks = document.getElementsByClassName("previewable-link");
 
 let muted = true;
-const toggleMute = () => {
+const toggleMute = (event) => {
+	event.stopPropagation();
 	muted = !muted;
 	storage.dataset.muted = muted;
 	if (muted) {
