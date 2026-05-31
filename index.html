@@ -271,11 +271,40 @@
 				pointer-events: none;
 			}
 
-			#ch-up { background-color: #9370db; }
-			#ch-down { background-color: #9370db; }
-			#remote-mute { background-color: #cd5c5c; }
-			#remote-info { background-color: #4169e1; }
-			#remote-av { background-color: #daa520; }
+			@media (max-width: 540px), (max-height: 420px) {
+				.remote-svg {
+					width: 20px;
+					height: 20px;
+				}
+
+				:has(#remote-toggle:checked) #remote {
+					width: 48px !important;
+				}
+
+				#remote-contents {
+					width: 48px;
+				}
+
+				.remote-btn {
+					padding: 2px;
+				}
+			}
+
+			#ch-up {
+				background-color: #9370db;
+			}
+			#ch-down {
+				background-color: #9370db;
+			}
+			#remote-mute {
+				background-color: #cd5c5c;
+			}
+			#remote-info {
+				background-color: #4169e1;
+			}
+			#remote-av {
+				background-color: #daa520;
+			}
 
 			.bobs-club-link {
 				margin: 2px;
@@ -551,7 +580,21 @@
 		</style>
 	</head>
 	<body class="centered-elements" id="root">
-		<div id="storage" style="display: none" data-muted="true"></div>
+		<div id="storage" style="display: none" data-muted="true">
+			<div id="info-control">
+				<label for="info-off" title="hide information">
+					<input id="info-off" name="info-control" type="radio" checked />
+				</label>
+
+				<label for="info-description" title="show description">
+					<input id="info-description" name="info-control" type="radio" />
+				</label>
+
+				<label for="info-credits" title="show credits">
+					<input id="info-credits" name="info-control" type="radio" />
+				</label>
+			</div>
+		</div>
 		<main>
 			<table>
 				<tr>
@@ -565,7 +608,11 @@
 					<td></td>
 					<td>
 						<div style="display: flex">
-							<div id="crt" class="squircle crt-tall crt-wide filter-off" title="aisia tv">
+							<div
+								id="crt"
+								class="squircle crt-tall crt-wide filter-off"
+								title="aisia tv"
+							>
 								<div class="smpte">
 									<div class="smpte-top">
 										<div style="background-color: #c0c0c0"></div>
@@ -639,32 +686,6 @@
 								</div>
 								<div id="controls">
 									<div id="mute-control"></div>
-									<div id="info-control" class="clickable">
-										<label for="info-off" title="hide information">
-											<input
-												id="info-off"
-												name="info-control"
-												type="radio"
-												checked
-											/>
-										</label>
-
-										<label for="info-description" title="show description">
-											<input
-												id="info-description"
-												name="info-control"
-												type="radio"
-											/>
-										</label>
-
-										<label for="info-credits" title="show credits">
-											<input
-												id="info-credits"
-												name="info-control"
-												type="radio"
-											/>
-										</label>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -674,32 +695,87 @@
 							<div id="remote-contents" class="squircle crt-tall">
 								<button class="remote-btn" id="ch-up" title="channel up">
 									<svg viewBox="0 0 100 100" class="remote-svg">
-										<polygon points="50,26 22,68 78,68" fill="white"/>
+										<polygon points="50,26 22,68 78,68" fill="white" />
 									</svg>
 								</button>
 								<button class="remote-btn" id="ch-down" title="channel down">
 									<svg viewBox="0 0 100 100" class="remote-svg">
-										<polygon points="50,74 22,32 78,32" fill="white"/>
+										<polygon points="50,74 22,32 78,32" fill="white" />
 									</svg>
 								</button>
 								<button class="remote-btn" id="remote-mute" title="mute">
 									<svg viewBox="0 0 100 100" class="remote-svg">
-										<polygon points="22,40 38,40 54,28 54,72 38,60 22,60" fill="white"/>
-										<line x1="62" y1="32" x2="78" y2="68" stroke="white" stroke-width="6" stroke-linecap="round"/>
-										<line x1="78" y1="32" x2="62" y2="68" stroke="white" stroke-width="6" stroke-linecap="round"/>
+										<polygon
+											points="22,40 38,40 54,28 54,72 38,60 22,60"
+											fill="white"
+										/>
+										<line
+											x1="62"
+											y1="32"
+											x2="78"
+											y2="68"
+											stroke="white"
+											stroke-width="6"
+											stroke-linecap="round"
+										/>
+										<line
+											x1="78"
+											y1="32"
+											x2="62"
+											y2="68"
+											stroke="white"
+											stroke-width="6"
+											stroke-linecap="round"
+										/>
 									</svg>
 								</button>
 								<button class="remote-btn" id="remote-info" title="info">
 									<svg viewBox="0 0 100 100" class="remote-svg">
-										<circle cx="50" cy="50" r="30" fill="none" stroke="white" stroke-width="5"/>
-										<line x1="50" y1="45" x2="50" y2="65" stroke="white" stroke-width="5" stroke-linecap="round"/>
-										<circle cx="50" cy="33" r="4.5" fill="white"/>
+										<circle
+											cx="50"
+											cy="50"
+											r="30"
+											fill="none"
+											stroke="white"
+											stroke-width="5"
+										/>
+										<line
+											x1="50"
+											y1="45"
+											x2="50"
+											y2="65"
+											stroke="white"
+											stroke-width="5"
+											stroke-linecap="round"
+										/>
+										<circle cx="50" cy="33" r="4.5" fill="white" />
 									</svg>
 								</button>
 								<button class="remote-btn" id="remote-av" title="a/v">
 									<svg viewBox="0 0 100 100" class="remote-svg">
-										<rect x="12" y="20" width="76" height="60" rx="14" ry="14" fill="none" stroke="white" stroke-width="5"/>
-										<text x="50" y="54" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',monospace" font-size="16" font-weight="bold" fill="white">A/V</text>
+										<rect
+											x="12"
+											y="20"
+											width="76"
+											height="60"
+											rx="14"
+											ry="14"
+											fill="none"
+											stroke="white"
+											stroke-width="5"
+										/>
+										<text
+											x="50"
+											y="54"
+											text-anchor="middle"
+											dominant-baseline="central"
+											font-family="'Courier New',monospace"
+											font-size="16"
+											font-weight="bold"
+											fill="white"
+										>
+											A/V
+										</text>
 									</svg>
 								</button>
 							</div>
@@ -767,8 +843,8 @@
 								class="clickable previewable-link toggle-label"
 								title="remote control"
 							>
-								<span class="closed">📺</span>
-								<span class="open">📡</span>
+								<span class="closed">▶️</span>
+								<span class="open">◀️</span>
 								<input
 									id="remote-toggle"
 									type="checkbox"
@@ -778,7 +854,11 @@
 							</label>
 						</div>
 
-						<div id="bobs-club-panel" class="squircle crt-wide" style="margin-top: 0.5em; margin-bottom: 0.5em">
+						<div
+							id="bobs-club-panel"
+							class="squircle crt-wide"
+							style="margin-top: 0.5em; margin-bottom: 0.5em"
+						>
 							<div id="bobs-club-panel-contents">
 								<a
 									class="bobs-club-link squircle"
@@ -1296,7 +1376,8 @@
 			const cornerCtx = cornerCanvas.getContext("2d");
 			let infoDescription = "";
 			let infoCredits = "";
-			const counterUrl = "https://bobs-server.net/counters/cm7n4e4cc0006ovm8ew2xe1w2/actions/cm7n4ecsm0007ovm8lrh91n0a";
+			const counterUrl =
+				"https://bobs-server.net/counters/cm7n4e4cc0006ovm8ew2xe1w2/actions/cm7n4ecsm0007ovm8lrh91n0a";
 			const counterImage = new Image();
 			counterImage.src = counterUrl;
 
@@ -1312,7 +1393,9 @@
 				cornerCanvas.height = h;
 			};
 
-			const crtBreakpoint = window.matchMedia("(max-width: 540px), (max-height: 420px)");
+			const crtBreakpoint = window.matchMedia(
+				"(max-width: 540px), (max-height: 420px)",
+			);
 			crtBreakpoint.addEventListener("change", () => {
 				setCanvasSizes();
 				drawMute();
@@ -1328,7 +1411,7 @@
 			const drawMute = () => {
 				const cw = muteCanvas.width;
 				const ch = muteCanvas.height;
-				const fontSize = Math.round(cw * 13 / 192);
+				const fontSize = Math.round((cw * 13) / 192);
 				const pad = fontSize;
 				muteCtx.clearRect(0, 0, cw, ch);
 				if (storage.dataset.muted !== "true") return;
@@ -1341,8 +1424,8 @@
 			const drawInfo = () => {
 				const cw = infoCanvas.width;
 				const ch = infoCanvas.height;
-				const fontSize = Math.round(cw * 13 / 192);
-				const lineHeight = Math.round(fontSize * 26 / 22);
+				const fontSize = Math.round((cw * 13) / 192);
+				const lineHeight = Math.round((fontSize * 26) / 22);
 				const pad = fontSize;
 				infoCtx.clearRect(0, 0, cw, ch);
 				const infoDescr = document.getElementById("info-description");
@@ -1397,7 +1480,10 @@
 			if (counterImage.complete) drawCounter();
 
 			const observer = new MutationObserver(() => drawMute());
-			observer.observe(storage, { attributes: true, attributeFilter: ["data-muted"] });
+			observer.observe(storage, {
+				attributes: true,
+				attributeFilter: ["data-muted"],
+			});
 
 			for (const id of ["info-off", "info-description", "info-credits"]) {
 				const radio = document.getElementById(id);
@@ -1446,7 +1532,8 @@
 			});
 			let currentVideoIndex = 0;
 			const play = (index) => () => {
-				currentVideoIndex = ((index % videos.length) + videos.length) % videos.length;
+				currentVideoIndex =
+					((index % videos.length) + videos.length) % videos.length;
 				overlay.classList.add("loading");
 				videoChangeStatic.in({ seconds: 0.01 });
 				const video = videos[currentVideoIndex];
@@ -1454,7 +1541,7 @@
 				infoDescription = video.description;
 				infoCredits = video.credits;
 				drawInfo();
-			player.addEventListener("ended", play((index + 1) % videos.length), {
+				player.addEventListener("ended", play((index + 1) % videos.length), {
 					once: true,
 				});
 			};
@@ -1485,9 +1572,15 @@
 			muteControl.title = "unmute";
 			muteControl.classList.add("clickable");
 
-			document.getElementById("remote-mute").addEventListener("click", toggleMute);
-			document.getElementById("ch-up").addEventListener("click", () => changeVideo(1));
-			document.getElementById("ch-down").addEventListener("click", () => changeVideo(-1));
+			document
+				.getElementById("remote-mute")
+				.addEventListener("click", toggleMute);
+			document
+				.getElementById("ch-up")
+				.addEventListener("click", () => changeVideo(1));
+			document
+				.getElementById("ch-down")
+				.addEventListener("click", () => changeVideo(-1));
 
 			document.getElementById("remote-info").addEventListener("click", () => {
 				const infoOff = document.getElementById("info-off");
